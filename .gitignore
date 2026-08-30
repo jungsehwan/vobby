@@ -1,0 +1,7 @@
+# IDE
+.idea/
+
+# OS
+.DS_Store
+
+# 주의: .claude/ 는 절대 ignore 하지 않는다 — 하네스 유실 방지 (README 참조)
