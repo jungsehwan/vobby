@@ -1,9 +1,5 @@
 # Agent Roles & Workflow
 
-<!-- Stack 하네스에서 이관한 범용 워크플로우.
-     Generator를 플랫폼에 맞게 분할(예: UI/도메인, iOS/Android)하고
-     검증 항목의 {placeholder}를 채울 것. -->
-
 ## 에이전트 역할 정의
 
 ### Planner Agent
@@ -15,23 +11,23 @@
 ### Generator Agent (플랫폼별 분할 가능)
 - **역할**: 코드 구현
 - **입력**: Design 문서, 실행계획
-- **출력**: {모듈 산출물 — 예: 도메인 모델, 저장소, 서비스, 화면(View/ViewModel), 컴포넌트}
+- **출력**: 워크스페이스별 산출물 — Mobile(화면/훅/서비스), Web(페이지/컴포넌트), API(NestJS 모듈: controller/service/entity/dto), Pipeline(Celery 태스크/분석 모듈), Shared(공통 타입)
 - **참조**: `docs/DESIGN.md` (컨벤션), 기존 유사 기능 코드
-- 규모가 커지면 계층/플랫폼 단위로 분할 (예: Generator-Domain / Generator-UI). 분할 시 경계 인터페이스를 먼저 합의하고 병렬 진행.
+- 규모가 커지면 워크스페이스 단위로 분할 (예: Generator-Client / Generator-API / Generator-Pipeline). 분할 시 `packages/shared-types`의 경계 인터페이스를 먼저 합의하고 병렬 진행.
 
 ### Evaluator Agent
 - **역할**: 구현 결과 검증 (maker ≠ checker — 구현자가 스스로 검증만 하고 끝내지 않는다)
 - **검증 항목**:
-  - 빌드 성공 여부 ({빌드 명령})
+  - 빌드 성공 여부 (`npm run typecheck/build --workspaces --if-present`, Python은 `compileall`+`pytest`)
   - 로직 검증 (테스트/실호출)
-  - 실행 검증 (시뮬레이터/실기기에서 화면·동작 확인)
+  - 실행 검증 (모바일=시뮬레이터/Expo Go, 웹=브라우저, API=실호출, 워커=샘플 태스크)
   - Design 문서 대비 구현 완성도 (갭 분석)
 - **참조**: `docs/QUALITY.md`
 
 ### Data/Migration Agent (데이터 계층이 생기면 활성화)
 - **역할**: 스키마 변경, 마이그레이션 스크립트 작성
-- **주의**: {스키마 관리 방식 명시 — 마이그레이션 도구 사용 여부, 자동 반영 여부}
-- **참조**: 스키마 참조 문서
+- **주의**: 스키마 변경의 단일 소스는 `services/main-api`의 마이그레이션 (ORM 마이그레이션 도구 — 마일스톤 1에서 TypeORM/Prisma 확정). **자동 스키마 동기화(synchronize/hbm2ddl류) 금지** — 반드시 마이그레이션 파일로. Python 워커는 스키마를 변경하지 않는다.
+- **참조**: `docs/references/db-schema.md` (마일스톤 1에서 신설 예정)
 
 ---
 

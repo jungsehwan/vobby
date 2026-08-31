@@ -2,10 +2,6 @@
 
 Evaluator 에이전트가 구현 결과를 검증할 때 사용하는 기준.
 
-<!-- 그레이딩 프레임(등급·빌드 필수·검증 절차)은 Stack에서 그대로 이관.
-     점수 항목은 웹(Entity/Controller 등) 기준이었으므로 플랫폼 중립 카테고리로 재구성함.
-     앱 스택 확정 후 각 항목의 세부 체크를 구체 컨벤션으로 치환할 것. -->
-
 ## 그레이딩 등급
 
 | 등급 | 설명 |
@@ -21,7 +17,9 @@ Evaluator 에이전트가 구현 결과를 검증할 때 사용하는 기준.
 
 | 항목 | 기준 |
 |------|------|
-| 빌드 | {빌드 명령} 성공 |
+| TS 타입체크 | `npm run typecheck --workspaces --if-present` 성공 |
+| TS 빌드 | `npm run build --workspaces --if-present` 성공 (변경 워크스페이스 포함) |
+| Python 검증 | `python -m compileall .` + `pytest` 성공 (ai-pipeline 변경 시) |
 | 컴파일/타입체크 경고 | 새로 추가한 코드에 경고 없음 |
 
 빌드 실패 = 무조건 F등급.

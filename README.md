@@ -1,14 +1,17 @@
 # Vobby
 
-Stack(웹서비스) 프로젝트의 Claude Code 하네스에서 **플랫폼 비종속 프로세스 층만 추출**한 템플릿 위에서 시작하는 프로젝트.
-하네스 이관일: 2026-08-31. 프로젝트 목적·스택 확정 후 `{placeholder}`를 채운다 (아래 체크리스트 참조).
+**취미 궤적 기반 AI 숏폼 자동 생성 플랫폼** — GPS 동선 + 촬영 미디어를 멀티모달 AI로 분석해
+9:16 숏폼을 자동 생성·공유한다. 기획 원본: `docs/00-pm/project-charter-v2.0.md`
 
-## 사용법
+Stack(웹서비스) 프로젝트 하네스의 프로세스 층 위에서 시작했다 (이관 2026-08-31, 같은 날 기획서 v2.0으로 스택 확정·placeholder 채움 완료).
 
-1. 이 디렉토리 내용물을 새 앱 프로젝트 루트에 복사
-2. `CLAUDE.md` / `ARCHITECTURE.md` / `docs/DESIGN.md` / `docs/QUALITY.md` / `.claude/skills/commit/SKILL.md` 의 `{placeholder}`를 앱 스택 확정 후 채움 (안내 주석 `<!-- -->` 블록은 채운 뒤 삭제)
-3. 첫 기능부터 `AGENTS.md` 워크플로우(Plan→Design→ExecPlan→Implement→Evaluate→Complete) 적용 — 템플릿은 `docs/templates/`
-4. `.claude/`를 저장소에 **추적**할 것 권장 — Stack에서는 `.gitignore` 처리되어 머신 간 하네스 유실이 실제로 발생했다
+## 시작하기
+
+1. 하네스 필독: `CLAUDE.md` → `ARCHITECTURE.md` → `docs/DESIGN.md` → `AGENTS.md` (4-file bootstrap)
+2. 로컬 인프라: `docker-compose up -d` (Colima Docker) — `vobby-db` **:5433**(PG18+PostGIS), `vobby-redis` **:6380**. 5432/6379는 타 프로젝트 점유라 사용 금지
+3. 환경변수: `.env.example`을 워크스페이스별 `.env`로 복사해 시크릿 채움
+4. 모든 기능은 `AGENTS.md` 워크플로우(Plan→Design→ExecPlan→Implement→Evaluate→Complete)로 — 현황은 `docs/product-specs/index.md`
+5. `.claude/`는 저장소에 **추적**한다 — Stack에서 gitignore로 머신 간 하네스 유실이 실제로 발생했다
 
 ## 이관 매핑 (원본 → 이 팩)
 
@@ -34,11 +37,12 @@ Stack(웹서비스) 프로젝트의 Claude Code 하네스에서 **플랫폼 비�
 - `stack-harness` 오케스트레이터 스킬, 에이전트 5종 정의, `loop-gate.js` Stop hook, pre-push hook — **원본이 이 mac 작업본에 존재하지 않아 추출 불가** (Windows 머신에만 존재). 필요하면 해당 머신에서 확보 후 같은 방식으로 일반화
 - Chrome MCP 브라우저 검증 절차 — 앱에서는 "실행 검증(시뮬레이터/실기기)"으로 치환됨
 
-## 새 프로젝트에서 추가로 정해야 할 것
+## 프로젝트 결정 체크리스트 (2026-08-31 기획서 v2.0 반영)
 
-- [ ] 앱 플랫폼/스택 → `ARCHITECTURE.md` §1
-- [ ] 빌드·실행·검증 명령 → `CLAUDE.md` §빌드, commit 스킬 §1, `QUALITY.md` §1
-- [ ] 실행 검증 수단 (시뮬레이터 자동화? 스크린샷 도구?) → `CLAUDE.md` 검증 §3
-- [ ] 스키마 관리 방식 (마이그레이션 도구 유무) → `AGENTS.md` Data agent
-- [ ] lock 파일 커밋 여부 (권장: 커밋 + lock 기반 CI 설치) → `CLAUDE.md` §의존성
-- [ ] (웹서버 붙일 때) 인터페이스 참조 문서 신설 + push 문서 규칙에 연결
+- [x] 앱 플랫폼/스택 → RN(Expo)+Next.js+NestJS+Python — `ARCHITECTURE.md` §1
+- [x] 빌드·실행·검증 명령 → npm workspaces 기반 — `CLAUDE.md` §빌드, commit 스킬 §1, `QUALITY.md` §1
+- [x] 실행 검증 수단 → 대상별(시뮬레이터/브라우저/실호출/샘플 태스크) — `CLAUDE.md` 검증 §3
+- [ ] 스키마 관리 방식 — 마이그레이션 도구(TypeORM vs Prisma)는 마일스톤 1 `db-schema-foundation`에서 확정 → `AGENTS.md` Data agent
+- [x] lock 파일 커밋 + CI는 `npm ci` / Python은 고정 버전 requirements.txt → `CLAUDE.md` §의존성
+- [ ] API 인터페이스 참조 문서 — Main API 첫 엔드포인트 구현 시 `docs/references/`에 신설
+- [ ] 로컬 Object Storage 수단 (MinIO 후보) — 미디어 업로드 기능 착수 전 확정

@@ -1,10 +1,7 @@
-# {PROJECT_NAME}
+# Vobby — 취미 궤적 기반 AI 숏폼 자동 생성 플랫폼
 
-<!-- ═══════════════════════════════════════════════════════════════
-  이 파일은 Stack 프로젝트 하네스에서 "프로세스 층"만 추출한 템플릿이다.
-  {중괄호 placeholder}를 프로젝트에 맞게 채운 뒤 이 주석 블록을 삭제할 것.
-  Stack 종속 내용(웹 빌드 명령, 엔티티 목록, env 키, 배포 절차)은 의도적으로 제외됨.
-═══════════════════════════════════════════════════════════════ -->
+GPS 궤적 + 촬영 미디어를 멀티모달 AI로 융합 분석해 9:16 숏폼 영상을 자동 생성·공유하는
+모노레포 프로젝트 (모바일 앱 + 웹 + API + AI 파이프라인). 기획 원본: `docs/00-pm/project-charter-v2.0.md`
 
 ## 🚫 작업 시작 전 하네스 부트스트랩 — 절대 규칙
 
@@ -24,7 +21,7 @@
 
 ### STEP 2: 작업 유형별 추가 문서 (해당 시 반드시 읽음)
 
-- 도메인/비즈니스 로직 이해 → `docs/guide/domain_concepts.md`
+- 도메인/비즈니스 로직·파이프라인 이해 → `docs/00-pm/project-charter-v2.0.md` (기획 원본)
 - 새 기능 구현 → `docs/product-specs/index.md` (현황 파악) + 해당 기능의 plan/design 문서
 - 실행 중인 작업 → `docs/exec-plans/active/` 내 해당 실행계획
 - 코드 품질 검증 → `docs/QUALITY.md`
@@ -43,22 +40,31 @@
 
 | 날짜 | 변경 내용 | 대상 | 사유 |
 |------|----------|------|------|
-| | | | |
+| 2026-08-31 | Stack 하네스 프로세스 층 이관 (초기 커밋) | 전체 | 검증 규율·문서 신뢰 규칙·워크플로우를 프로젝트 첫날부터 적용 |
+| 2026-08-31 | 기획서 v2.0 기반 placeholder 확정 | CLAUDE/ARCHITECTURE/DESIGN/QUALITY/commit스킬 | 스택 확정(RN+Next+NestJS+Python)에 따른 빌드·검증 명령 구체화 |
+| 2026-08-31 | 로컬 인프라를 brew 네이티브 → Docker Compose로 전환 | CLAUDE §인프라, ARCHITECTURE, .env.example | brew redis가 기존 Colima Docker redis(:6379)와 바인딩 충돌 — 접속 경로 따라 다른 인스턴스에 붙는 위험. 전용 컨테이너(:5433/:6380)로 격리 |
+| 2026-08-31 | 커밋 규칙을 `docs/guide/git-convention.md`로 단일화 | CLAUDE §커밋, commit 스킬 | 규칙이 CLAUDE.md·스킬 두 곳에 분산 — 단일 소스로 모으고 상호 참조 (wikidocs 332862 타입 체계 반영) |
 
 ---
 
 ## Git 커밋 규칙
+**단일 소스: `docs/guide/git-convention.md`** — 형식(`type(scope): 한글 요약`), 타입 표, 커밋 단위 원칙.
+핵심 절대 규칙 (요약):
 - 커밋 메시지에 `Co-Authored-By: Claude` 등 AI 작성 표기를 절대 포함하지 않는다
 - 커밋 메시지는 순수하게 변경 내용만 기술한다
 - 커밋·push는 사용자가 명령할 때만 수행한다 (자동 커밋 금지)
 
-## 프로젝트 구조
+## 프로젝트 구조 (모노레포 — npm workspaces)
 
-<!-- 앱 모듈 구조를 여기에 기술. 예:
-- `app/` — 애플리케이션 본체
-- `core/` — 도메인 모델, 공통 로직
-- `data/` — 저장소, 로컬 DB, 외부 API 클라이언트
--->
+- `apps/mobile/` — React Native (Expo) iOS/Android 앱 — GPS 로깅, 갤러리/EXIF
+- `apps/web/` — Next.js 사용자 웹 & SNS 공유 뷰어 (`/v/:id`)
+- `apps/admin/` — Next.js 관리자 대시보드
+- `services/main-api/` — NestJS 메인 API (인증, CRUD, 큐잉)
+- `services/ai-pipeline/` — Python FastAPI+Celery 워커 (vision/spatial/director/renderer)
+- `packages/shared-types/` — TS 공통 인터페이스/DTO
+- `packages/ui-tokens/` — 공통 디자인 토큰
+
+의존 방향: apps → main-api → Redis 큐 → ai-pipeline. 상세는 `ARCHITECTURE.md` §2.
 
 ## 빌드 & 실행
 
@@ -68,21 +74,43 @@
 방치하면 프로세스가 누적되어 PC 리소스가 고갈된다.
 
 ```bash
-# {빌드 데몬 정리 명령. 예: ./gradlew --stop / watchman shutdown-server 등}
-# {잔여 프로세스 확인 명령}
+# 잔여 dev 서버/워커/시뮬레이터 프로세스 확인
+ps aux | grep -E 'next dev|expo start|nest start|celery|Simulator' | grep -v grep
+# Metro/watchman 정리 (Expo)
+watchman shutdown-server 2>/dev/null; pkill -f "expo start" 2>/dev/null
+# Next/Nest dev 서버 정리
+pkill -f "next dev" 2>/dev/null; pkill -f "nest start" 2>/dev/null
 ```
 
 ### 빌드 명령
 
 ```bash
+# ── TypeScript 워크스페이스 (루트에서) ──
 # 컴파일/타입체크만 (가장 빠른 검증)
-# {명령}
+npm run typecheck --workspaces --if-present
 
-# 전체 빌드
-# {명령}
+# 전체 빌드 (web/admin/main-api)
+npm run build --workspaces --if-present
 
-# 앱 실행 (시뮬레이터/에뮬레이터/데스크톱)
-# {명령}
+# 개별 실행
+npm run dev -w apps/web            # 사용자 웹 (localhost:3000)
+npm run dev -w apps/admin          # 관리자 웹
+npm run start:dev -w services/main-api  # NestJS API
+npx expo start -c                  # 모바일 (apps/mobile에서) — iOS 시뮬레이터: i / Android: a
+
+# ── Python 워커 (services/ai-pipeline에서) ──
+source .venv/bin/activate
+python -m compileall .             # 문법 검증
+pytest                             # 테스트
+celery -A worker worker --loglevel=info  # 워커 실행
+
+# ── 인프라 (Colima Docker — docker-compose.yml) ──
+# vobby 전용 컨테이너: vobby-db(:5433, PG18+PostGIS), vobby-redis(:6380)
+# 주의: 5432(brew PG15)·6379(타 프로젝트 Docker redis)는 다른 프로젝트용 — 절대 사용 금지
+docker-compose up -d
+docker ps --filter name=vobby            # 상태 확인 (healthy 확인)
+psql "postgresql://vobby:vobby@localhost:5433/vobby"   # DB 접속
+redis-cli -p 6380 ping                    # Redis 확인
 ```
 
 ### 🚨 의존성 버전 고정 규칙 (Stack 실사고 2회 이관 — 원인 동일)
@@ -108,7 +136,13 @@ lock 파일이 저장소에 없으면 로컬과 CI가 서로 다른 버전을 �
 - 외부 API 연동 수정 시: 실제 호출로 응답 검증
 
 ### 3. 실행 검증 (항상)
-**앱을 실제로 구동해서 확인한다** (시뮬레이터/에뮬레이터/실기기/데스크톱 실행):
+**실제로 구동해서 확인한다** — 변경 대상별 수단:
+- `apps/mobile` → iOS 시뮬레이터/Android 에뮬레이터 또는 Expo Go 실기기
+- `apps/web`, `apps/admin` → `npm run dev` 후 브라우저 확인
+- `services/main-api` → dev 서버 기동 후 실제 HTTP 호출로 응답 검증
+- `services/ai-pipeline` → 샘플 입력으로 해당 태스크 실행, 산출물(스코어/EDL/영상) 확인
+
+공통 절차:
 1. 변경된 화면으로 이동, **스크린샷/화면 확인** — UI 렌더링 정상 확인
 2. **주요 동작 테스트** — 탭/입력/저장 등 사용자 액션이 화면에 반영되는지 확인
 3. **로그/에러 콘솔 확인** — 크래시·에러 로그 없는지 확인
@@ -128,7 +162,8 @@ lock 파일이 저장소에 없으면 로컬과 CI가 서로 다른 버전을 �
 | 에이전트 역할/워크플로우 | `AGENTS.md` |
 | 코드 품질 기준 | `docs/QUALITY.md` |
 | 보안 체크리스트 | `docs/SECURITY.md` |
-| 도메인 개념 / 비즈니스 로직 | `docs/guide/domain_concepts.md` |
+| 도메인 개념 / 기획 원본 | `docs/00-pm/project-charter-v2.0.md` |
+| Git 커밋 규칙 | `docs/guide/git-convention.md` |
 | 기능 명세 목록 (진실 소스) | `docs/product-specs/index.md` |
 | 실행 계획 (활성) | `docs/exec-plans/active/` |
 | 기술부채 추적 | `docs/exec-plans/tech-debt-tracker.md` |
