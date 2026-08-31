@@ -5,3 +5,32 @@
 .DS_Store
 
 # 주의: .claude/ 는 절대 ignore 하지 않는다 — 하네스 유실 방지 (README 참조)
+
+# 시크릿 — .env.example만 커밋한다 (DESIGN.md §7)
+.env
+.env.*
+!.env.example
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Expo / React Native
+.expo/
+ios/build/
+android/build/
+android/.gradle/
+
+# Python (services/ai-pipeline)
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 렌더링 산출물 (로컬 테스트)
+*.mp4.tmp
+media-output/

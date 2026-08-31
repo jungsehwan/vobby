@@ -1,0 +1,40 @@
+# vobby 로컬 개발 인프라 (Colima Docker)
+# 포트 선정 이유 — 이 Mac의 기존 점유 포트와 격리:
+#   5432 = 타 프로젝트 brew PG15, 6379 = 타 프로젝트 Docker redis
+# 접속 정보는 로컬 개발 전용 비-시크릿 (DESIGN.md §7)
+services:
+  db:
+    # postgis/postgis 공식 이미지는 arm64 미지원 — Apple Silicon용 멀티아치 빌드 사용
+    image: imresamu/postgis:18-3.6
+    container_name: vobby-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: vobby
+      POSTGRES_USER: vobby
+      POSTGRES_PASSWORD: vobby
+    volumes:
+      # PG18+ 이미지 규약: 마운트는 /var/lib/postgresql (하위에 data/ 자동 생성)
+      - vobby-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vobby -d vobby"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    container_name: vobby-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - vobby-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  vobby-pgdata:
+  vobby-redisdata:
