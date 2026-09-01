@@ -44,5 +44,5 @@ Stack(웹서비스) 프로젝트 하네스의 프로세스 층 위에서 시작�
 - [x] 실행 검증 수단 → 대상별(시뮬레이터/브라우저/실호출/샘플 태스크) — `CLAUDE.md` 검증 §3
 - [x] 스키마 관리 방식 — TypeORM 마이그레이션 (2026-09-01 확정, synchronize 금지) → `AGENTS.md` Data agent
 - [x] lock 파일 커밋 + CI는 `npm ci` / Python은 고정 버전 requirements.txt → `CLAUDE.md` §의존성
-- [ ] API 인터페이스 참조 문서 — Main API 첫 엔드포인트 구현 시 `docs/references/`에 신설
+- [x] API 인터페이스 참조 문서 — `docs/references/api-endpoints.md` (2026-09-01 신설)
 - [ ] 로컬 Object Storage 수단 (MinIO 후보) — 미디어 업로드 기능 착수 전 확정

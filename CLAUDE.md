@@ -166,6 +166,7 @@ lock 파일이 저장소에 없으면 로컬과 CI가 서로 다른 버전을 �
 | 도메인 개념 / 기획 원본 | `docs/00-pm/project-charter-v2.0.md` |
 | Git 커밋 규칙 | `docs/guide/git-convention.md` |
 | DB 스키마 | `docs/references/db-schema.md` |
+| API 엔드포인트 | `docs/references/api-endpoints.md` |
 | 기능 명세 목록 (진실 소스) | `docs/product-specs/index.md` |
 | 실행 계획 (활성) | `docs/exec-plans/active/` |
 | 기술부채 추적 | `docs/exec-plans/tech-debt-tracker.md` |
