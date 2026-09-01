@@ -34,17 +34,19 @@ def connect() -> psycopg.Connection:
 
 def fetch_render_context(conn: psycopg.Connection, short_form_id: str) -> dict[str, Any] | None:
     row = conn.execute(
-        "SELECT edl, trip_id::text FROM short_forms WHERE id = %s",
+        """SELECT sf.edl, sf.trip_id::text, ST_AsGeoJSON(t.path)::json
+           FROM short_forms sf JOIN trips t ON t.id = sf.trip_id
+           WHERE sf.id = %s""",
         (short_form_id,),
     ).fetchone()
     if not row:
         return None
-    edl, trip_id = row
+    edl, trip_id, path = row
     keys = conn.execute(
         "SELECT id::text, storage_key FROM media WHERE trip_id = %s",
         (trip_id,),
     ).fetchall()
-    return {"edl": edl, "storageKeys": {k[0]: k[1] for k in keys}}
+    return {"edl": edl, "storageKeys": {k[0]: k[1] for k in keys}, "path": path}
 
 
 def save_render_result(

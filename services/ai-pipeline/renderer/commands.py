@@ -40,6 +40,16 @@ def kenburns_clip_cmd(image_path: str, duration_s: float, out_path: str) -> list
     ]
 
 
+def frames_clip_cmd(pattern: str, out_path: str) -> list[str]:
+    """PNG 시퀀스 클립 — 지도 궤적 애니메이션용. 길이는 프레임 수/FPS로 결정."""
+    return [
+        "ffmpeg", "-y",
+        "-framerate", str(FPS), "-i", pattern,
+        *_base_video_args(),
+        out_path,
+    ]
+
+
 def concat_cmd(list_file: str, out_path: str) -> list[str]:
     return [
         "ffmpeg", "-y",

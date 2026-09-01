@@ -10,6 +10,7 @@ from celery import shared_task
 from common.progress import set_progress
 from renderer import commands, db
 from renderer.textcard import make_text_card
+from spatial.map_animation import render_map_frames
 
 
 def _run(argv: list[str]) -> None:
@@ -27,9 +28,17 @@ def _write_text(workdir: str, name: str, text: str) -> str:
     return path
 
 
+def _path_coords(path_geojson: dict[str, Any] | None) -> list[tuple[float, float]]:
+    """trips.path GeoJSON → (lon, lat) 목록. Z/M 차원은 지도 드로잉에 불필요."""
+    if not path_geojson or path_geojson.get("type") != "LineString":
+        return []
+    return [(c[0], c[1]) for c in path_geojson.get("coordinates", [])]
+
+
 def _render_segments(
-    edl: dict[str, Any], storage_keys: dict[str, str | None], workdir: str, task_id: str
+    edl: dict[str, Any], ctx: dict[str, Any], workdir: str, task_id: str
 ) -> list[str]:
+    storage_keys: dict[str, str | None] = ctx["storageKeys"]
     clips: list[str] = []
     segments = edl["segments"]
     for i, seg in enumerate(segments):
@@ -37,13 +46,17 @@ def _render_segments(
         duration = float(seg["end"]) - float(seg["start"])
 
         if seg["kind"] == "map_overview":
-            # 자리 표시자 — 기능 12(map-animation)에서 궤적 조감으로 교체
-            card = make_text_card(
-                edl.get("title") or "Vobby 여행",
-                os.path.join(workdir, "intro.png"),
-                font_size=72,
-            )
-            _run(commands.still_clip_cmd(card, duration, out))
+            title = edl.get("title") or "Vobby 여행"
+            coords = _path_coords(ctx.get("path"))
+            if len(coords) >= 2:
+                pattern = render_map_frames(
+                    coords, title, workdir, round(duration * commands.FPS)
+                )
+                _run(commands.frames_clip_cmd(pattern, out))
+            else:
+                # 궤적 없는 여행 — 텍스트 카드 폴백 (plan §5)
+                card = make_text_card(title, os.path.join(workdir, "intro.png"), font_size=72)
+                _run(commands.still_clip_cmd(card, duration, out))
             clips.append(out)
         elif seg["kind"] == "stats":
             s = seg["stats"]
@@ -95,7 +108,7 @@ def render_short_form(self, short_form_id: str) -> dict[str, Any]:
             thumb_key = f"renders/{short_form_id}.jpg"
 
             with tempfile.TemporaryDirectory(prefix="vobby-render-") as workdir:
-                clips = _render_segments(edl, ctx["storageKeys"], workdir, task_id)
+                clips = _render_segments(edl, ctx, workdir, task_id)
 
                 list_file = _write_text(
                     workdir, "concat.txt", "".join(f"file '{c}'\n" for c in clips)
