@@ -9,3 +9,4 @@
 | 2026-09-01 | 온디바이스 블러(Laplacian)/중복 연사 1차 필터 미구현 (기획 Phase 1 항목) | `apps/mobile` | 이미지 처리 의존성 큼 — 스캔 골격 우선 | ~~마일스톤 3와 함께~~ **블러는 vision-scoring이 서버측 흡수(2026-09-01)**. 중복 연사 필터만 잔여 — 업로드 절감 필요 시 온디바이스 재검토 | 부분 해소 |
 | 2026-09-01 | 스캔이 사진마다 getAssetInfoAsync 순차 호출 (수백 장 시 느림) | `apps/mobile gallery-scan.service.ts` | 명시적 스캔 + 수십 장 수준 — 무해 | 병렬화(제한 동시성) 또는 EXIF 배치 조회로 교체 | 미해결 |
 | 2026-09-01 | 업로드 시 media를 로우 단위 INSERT (수백 장 시 왕복 과다) | `main-api trip.service.ts` | MVP — 여행당 수십 장 수준 | 다중 VALUES 배치 insert로 교체 | 미해결 |
+| 2026-09-01 | POI 태스크가 DB 연결을 3회 개설 (exists/fetch/update 각각) | `ai-pipeline spatial/db.py` | 여행당 1회 실행 — 무해 | 태스크 단위 단일 연결(컨텍스트 전달)로 리팩토링, 파이프라인 공용 DB 모듈화와 함께 | 미해결 |
