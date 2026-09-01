@@ -26,7 +26,7 @@
 
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
-| 4 | 모바일 백그라운드 GPS 로깅 (`mobile-gps-logging`) | - | - | - | Expo, iOS/Android 권한 사유 포함 |
+| 4 | 모바일 백그라운드 GPS 로깅 (`mobile-gps-logging`) | Plan | Design | Impl | Expo 앱 생성 + TaskManager/SQLite. iOS 시뮬레이터 백그라운드 로깅 실증. 2026-09-01 (A등급). Android 실검증은 추후 |
 | 5 | 갤러리 EXIF 추출 + Time-Sync 매칭 (`media-exif-timesync`) | - | - | - | 온디바이스 블러/중복 필터 포함 |
 | 6 | 웹 공유 뷰어 기본 구조 (`web-viewer-base`) | - | - | - | `/v/:id`, OpenGraph |
 | 7 | 공통 패키지 구성 (`shared-packages`) | Plan | Design | Impl | @vobby/shared-types(와이어 계약)·ui-tokens(토큰 2층). main-api 소비 전환 완료. 2026-09-01 (A등급) |

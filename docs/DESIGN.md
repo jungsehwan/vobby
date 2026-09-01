@@ -22,6 +22,7 @@
 | NestJS 계층 | `*.controller.ts` / `*.service.ts` / `*.module.ts` / `*.entity.ts` | `short-form.service.ts` |
 | DTO | `*.dto.ts`, 클래스 접미사 Dto | `CreateShortFormDto` |
 | 훅 | `use` 접두사 | `useRenderProgress` |
+| (mobile) 모듈 파일명 | Metro asset 확장자(.db·.json 등)와 겹치는 접미사 금지 | `recording-db.ts` (O) / `recording.db.ts` (X — asset으로 해석됨) |
 
 ### Python (services/ai-pipeline)
 
