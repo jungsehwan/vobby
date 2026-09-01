@@ -81,3 +81,13 @@
 ## RDB 비대상
 
 - **RenderJob** (작업 진행률): Redis 휘발성 — ARCHITECTURE §3
+
+## Redis 키/큐 규약 (vobby-redis :6380)
+
+| DB | 용도 | 규약 |
+|----|------|------|
+| 0 | 앱 캐시·진행률 (`REDIS_URL`) | `vobby:progress:{taskId}` = JSON `{status, detail, updatedAt}`, **TTL 1h** |
+| 1 | Celery 브로커 (`CELERY_BROKER_URL`) | 큐 리스트 `celery` — Node는 프로토콜 v2로 발행, Python Celery가 소비 |
+| 2 | Celery result backend | Python 내부용 (Node 미접근) |
+
+- 발행: `src/queue/celery-producer.ts` / 진행률 기록: `common/progress.py` — 규약 변경 시 양쪽 동시 수정

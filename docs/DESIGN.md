@@ -35,7 +35,9 @@
 ## 3. 디렉토리/모듈 배치 규칙
 - 기능 코드는 해당 워크스페이스 내부에만 — 워크스페이스 간 직접 상대경로 import 금지, `packages/*` 경유
 - `apps/mobile`: 화면은 `app/`(expo-router), 로직은 `src/features/{도메인}/` (hooks/services/components)
-- `services/main-api`: 도메인은 `src/domain/{도메인}/` (entity/service/controller/dto), 인프라는 `src/database/`(DataSource·마이그레이션)·`src/config/` — db-schema-foundation에서 확정된 실구조
+- `services/main-api`: 도메인은 `src/domain/{도메인}/` (entity/service/controller/dto), 인프라는 `src/database/`(DataSource·마이그레이션)·`src/queue/`(Celery 발행) — 실구조 기준
+- ESM 주의: 모듈↔서비스 상호 참조 금지 — 공유 DI 토큰은 `*.tokens.ts`로 분리 (순환 import TDZ 사고, queue-worker-foundation)
+- 검증/운영 스크립트는 `scripts/` (tsconfig.build 제외 영역) — npm 스크립트로 진입점 노출
 - `services/ai-pipeline`: 파이프라인 단계별 패키지 고정 — `vision/`, `spatial/`, `director/`, `renderer/` + 공용은 `common/`
 
 ## 4. 상태관리 패턴
