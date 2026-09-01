@@ -39,9 +39,11 @@ vobby/
 │       ├── director/       #   스토리 엔진 — EDL(컷 편집 타임라인) 생성
 │       └── renderer/       #   지도 애니메이션 + FFmpeg 영상 합성
 └── packages/
-    ├── shared-types/       # TS 공통 인터페이스/DTO (앱↔웹↔API 공유)
-    └── ui-tokens/          # 공통 디자인 토큰
+    ├── shared-types/       # 와이어 계약(DTO/타입) — geo·auth·pipeline·api. 엔티티는 공유하지 않음
+    └── ui-tokens/          # 디자인 토큰 2층 (palette 원시 → color 시맨틱), 플랫폼 중립 원시값
 ```
+
+**패키지 소비**: tsc dist 빌드 산출물을 소비 (`@vobby/shared-types` 등). 빌드 순서는 workspaces 배열(packages → services → apps)로 보장.
 
 **의존 방향**: Client(apps/*) → Main API(services/main-api) → Queue(Redis) → AI Pipeline(services/ai-pipeline) → Storage.
 Client는 AI Pipeline을 직접 호출하지 않는다. TS 계층 간 공유는 packages/* 를 통해서만.
