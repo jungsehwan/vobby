@@ -49,7 +49,7 @@
 
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
-| 11 | 스토리 엔진 — EDL 타임라인 생성 (`director-edl`) | - | - | - | Intro/Body/Highlight/Outro |
+| 11 | 스토리 엔진 — EDL 타임라인 생성 (`director-edl`) | Plan | Design | Impl | vision·POI·BGM 결합 → EDL v1(4슬롯·비트 스냅), status 전이 analyzing→rendering. 2026-09-01 (A등급) |
 | 12 | 지도 궤적 애니메이션 렌더링 (`map-animation`) | - | - | - | Mapbox/Headless Chromium |
 | 13 | FFmpeg 숏폼 합성 파이프라인 (`ffmpeg-render`) | - | - | - | 9:16, Ken-Burns, HUD, 믹싱 |
 

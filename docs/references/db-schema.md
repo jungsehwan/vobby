@@ -61,7 +61,7 @@
 | id | uuid PK | |
 | user_id / trip_id | uuid FK | 둘 다 CASCADE |
 | status | text | CHECK: `requested`→`analyzing`→`rendering`→`done`/`failed` |
-| edl | jsonb NULL | 스토리 엔진 타임라인 |
+| edl | jsonb NULL | EDL v1 (director.generate_edl 기록 — 계약: director-edl design §0-1) |
 | video_key / thumbnail_key | text NULL | |
 | duration_s | integer NULL | |
 | share_slug | text NULL UNIQUE | `/v/:slug` 공유 URL |
