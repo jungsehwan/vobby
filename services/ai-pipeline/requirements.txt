@@ -3,3 +3,9 @@
 celery[redis]==5.6.3
 redis==6.4.0
 python-dotenv==1.2.3
+# vision-scoring
+torch==2.13.0
+open_clip_torch==3.3.0
+pillow==12.3.0
+opencv-python-headless==5.0.0.93
+psycopg[binary]==3.3.5
