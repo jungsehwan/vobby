@@ -2,7 +2,7 @@
 
 > 진실 소스: `services/main-api/src/database/migrations/` — 이 문서는 요약본.
 > 스키마 변경 시 이 문서를 함께 갱신한다 (CLAUDE.md §push 시 문서 업데이트 규칙).
-> 최종 갱신: 2026-09-01 (RefreshTokens — api-auth-foundation)
+> 최종 갱신: 2026-09-01 (backend-trip-model — Trajectory→Trip 재구성, 마이그레이션 스쿼시)
 
 ## 공통 규약
 
@@ -24,40 +24,40 @@
 | nickname | text | |
 | avatar_url | text NULL | |
 
-### trajectories — GPS 궤적 (활동 1회)
+### trips — 사진·외부 이력으로 재구성된 여행 (구 trajectories 대체)
 | 컬럼 | 타입 | 비고 |
 |------|------|------|
 | id | uuid PK | |
 | user_id | uuid FK→users | ON DELETE CASCADE |
-| title | text NULL | AI 생성 활동 타이틀 |
-| path | **geography(LineStringZM, 4326)** | X=경도 Y=위도 **Z=고도m M=epoch초** |
-| started_at / ended_at | timestamptz | |
-| distance_m / elevation_gain_m | double precision | 저장 시 계산 확정 (Outro 통계) |
-| duration_s / point_count | integer | |
+| title | text NULL | AI 생성 여행 타이틀 |
+| started_at / ended_at | timestamptz | 사진 시각 범위 |
+| path | geography(LineStringZM, 4326) **NULL** | GPS 사진 시간순 시퀀스 근사 — GPS 사진 0장이면 NULL |
+| distance_m | double precision NULL | path 있을 때만 (근사) |
+| media_count | integer | 비정규화 — 업로드 API가 관리 |
 
-- `ix_trajectories_path` GIST(path), `ix_trajectories_user_started` (user_id, started_at DESC)
-- 시각→위치: `ST_LocateAlong(path::geometry, epoch초)` / 포인트 분해: `ST_DumpPoints`
+- `ix_trips_path` GIST(path), `ix_trips_user_started` (user_id, started_at DESC)
 
 ### media — 사진/영상 메타데이터 (원본은 S3)
 | 컬럼 | 타입 | 비고 |
 |------|------|------|
 | id | uuid PK | |
 | user_id | uuid FK→users | CASCADE |
-| trajectory_id | uuid FK NULL | Time-Sync 매칭 전 NULL, ON DELETE SET NULL |
+| trip_id | uuid FK→trips | **NOT NULL, CASCADE** — 여행 소속으로만 업로드 |
 | type | text | CHECK: `photo`·`video` |
 | captured_at | timestamptz | EXIF 촬영 시각 |
 | location | geography(Point,4326) NULL | EXIF 위경도 없을 수 있음 |
+| source | text | CHECK: `exif`·`timesync`·`none` — 좌표 출처 (모바일 규약 공유) |
 | width / height | integer NULL | |
 | storage_key / thumbnail_key | text NULL | 선별 업로드 전 NULL |
 | vision_score | jsonb NULL | Vision AI 결과 (마일스톤 3) |
 
-- `ix_media_location` GIST, `ix_media_trajectory_captured` (trajectory_id, captured_at)
+- `ix_media_location` GIST, `ix_media_trip_captured` (trip_id, captured_at)
 
 ### short_forms — 생성된 숏폼
 | 컬럼 | 타입 | 비고 |
 |------|------|------|
 | id | uuid PK | |
-| user_id / trajectory_id | uuid FK | 둘 다 CASCADE |
+| user_id / trip_id | uuid FK | 둘 다 CASCADE |
 | status | text | CHECK: `requested`→`analyzing`→`rendering`→`done`/`failed` |
 | edl | jsonb NULL | 스토리 엔진 타임라인 |
 | video_key / thumbnail_key | text NULL | |

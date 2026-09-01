@@ -1,5 +1,7 @@
 # DB 스키마 설계 — 기반 도메인 모델 (db-schema-foundation)
 
+> **⚠️ 부분 무효 (2026-09-01)** — Trajectory 도메인은 방향 정정으로 **Trip**으로 대체됨(`backend-trip-model`), 마이그레이션도 스쿼시됨.
+> User/Media/ShortForm 골격·규약(uuidv7, text+CHECK, LineStringZM)은 유효.
 > Status: Approved (2026-09-01)
 > 작성일: 2026-09-01
 

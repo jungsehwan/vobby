@@ -61,8 +61,8 @@ Python 워커는 `services/ai-pipeline/` 자체 venv + 버전 고정 `requiremen
 | 모델 | 저장 위치 | 도메인 | 비고 |
 |------|-----------|--------|------|
 | User | PostgreSQL | 회원 | OAuth 계정, 프로필 |
-| Trajectory | PostgreSQL (PostGIS) | 궤적 | GPS 로그 — LineString + 타임스탬프, 공간 인덱스 |
-| Media | PostgreSQL + S3 | 미디어 | 사진/영상 메타데이터(EXIF 위경도·시각), 원본은 S3 |
+| **Trip** | PostgreSQL (PostGIS) | 여행 | 사진·외부 이력으로 재구성 — path(LineStringZM) **nullable**, 근사 통계 (2026-09-01 Trajectory 대체) |
+| Media | PostgreSQL + S3 | 미디어 | 사진/영상 메타(EXIF 위경도·시각) + 좌표 출처(source), 원본은 S3 |
 | ShortForm | PostgreSQL + S3 | 숏폼 | 생성된 영상 메타데이터, EDL, 렌더링 상태, 공유 URL |
 | RenderJob | Redis | 파이프라인 | Celery 작업 상태·진행률 (휘발성) |
 

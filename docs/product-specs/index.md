@@ -21,6 +21,7 @@
 | 1 | DB 스키마 설계 — User/Trajectory/Media/ShortForm (`db-schema-foundation`) | Plan | Design | Impl | TypeORM+uuidv7+LineStringZM. 2026-09-01 완료 (A등급) |
 | 2 | Main API 골격 + 인증(OAuth2/JWT) (`api-auth-foundation`) | Plan | Design | Impl | Google·Kakao 재검증 + refresh 회전. 2026-09-01 완료 (A등급). 실토큰 E2E는 콘솔 앱 등록 후 |
 | 3 | Redis 작업 큐 + Celery 워커 골격 (`queue-worker-foundation`) | Plan | Design | Impl | Node 직접 발행(프로토콜 v2) + 진행률 키 규약. 2026-09-01 완료 (A등급) — **마일스톤 1 종료** |
+| 1a | 백엔드 재구성 — Trip 도메인 (`backend-trip-model`) | Plan | Design | Impl | 방향 정정 반영: Trajectory→Trip(path nullable), media.source, 마이그레이션 스쿼시(배포 전 1회). by-slug 공개 조회 포함. 2026-09-01 (A등급) |
 
 ### 마일스톤 2 — 클라이언트 & 미디어 인제스트
 
