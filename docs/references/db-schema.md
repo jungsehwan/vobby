@@ -35,6 +35,7 @@
 | path | geography(LineStringZM, 4326) **NULL** | GPS 사진 시간순 시퀀스 근사 — GPS 사진 0장이면 NULL |
 | distance_m | double precision NULL | path 있을 때만 (근사) |
 | media_count | integer | 비정규화 — 업로드 API가 관리 |
+| pois | jsonb NULL | POI 분석 결과 — spatial.extract_pois가 기록 (start/spot/end) |
 
 - `ix_trips_path` GIST(path), `ix_trips_user_started` (user_id, started_at DESC)
 
