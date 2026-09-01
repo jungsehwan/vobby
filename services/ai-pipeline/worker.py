@@ -24,7 +24,7 @@ app = Celery(
     "vobby-pipeline",
     broker=_require_env("CELERY_BROKER_URL"),
     backend=_require_env("CELERY_RESULT_BACKEND"),
-    include=["common.tasks", "vision.tasks"],
+    include=["common.tasks", "vision.tasks", "spatial.tasks"],
 )
 
 app.conf.update(

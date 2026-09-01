@@ -56,6 +56,10 @@ export class Trip {
   @Column({ name: 'media_count', type: 'integer', default: 0 })
   mediaCount!: number;
 
+  /** POI 분석 결과 — 파이프라인(spatial.extract_pois)이 기록 */
+  @Column({ type: 'jsonb', nullable: true })
+  pois!: Record<string, unknown>[] | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 
