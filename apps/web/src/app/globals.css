@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Pretendard", sans-serif;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.card {
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat strong {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  display: block;
+}
+
+.caption {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.video-placeholder {
+  aspect-ratio: 9 / 16;
+  max-height: 480px;
+  border-radius: var(--radius-md);
+  background: var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+.cta {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-decoration: none;
+  text-align: center;
+  font-weight: 600;
+}
+
+.error {
+  color: var(--color-danger);
+}
