@@ -6,6 +6,8 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: 'Vobby' }} />
+      <Stack.Screen name="sessions" options={{ title: '지난 기록' }} />
+      <Stack.Screen name="session/[id]" options={{ title: '기록 상세' }} />
     </Stack>
   );
 }

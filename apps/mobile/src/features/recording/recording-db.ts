@@ -18,8 +18,8 @@ export interface RecordedPoint {
   recorded_at: number;
 }
 
-// 백그라운드 태스크와 화면이 같은 파일 DB를 공유한다
-const db = SQLite.openDatabaseSync('vobby-recording.db');
+// 백그라운드 태스크와 화면이 같은 파일 DB를 공유한다 (media-db 등 다른 기능도 이 인스턴스 사용)
+export const db = SQLite.openDatabaseSync('vobby-recording.db');
 
 db.execSync(`
   PRAGMA journal_mode = WAL;
@@ -50,6 +50,19 @@ export function createSession(id: string, startedAtSec: number): void {
 export function getActiveSession(): RecordingSession | null {
   return db.getFirstSync<RecordingSession>(
     `SELECT * FROM sessions WHERE status = 'recording' ORDER BY started_at DESC LIMIT 1`,
+  );
+}
+
+export function listFinishedSessions(): RecordingSession[] {
+  return db.getAllSync<RecordingSession>(
+    `SELECT * FROM sessions WHERE status = 'done' ORDER BY started_at DESC`,
+  );
+}
+
+export function getSession(id: string): RecordingSession | null {
+  return db.getFirstSync<RecordingSession>(
+    `SELECT * FROM sessions WHERE id = ?`,
+    [id],
   );
 }
 

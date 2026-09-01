@@ -29,6 +29,12 @@
       "expo-router",
       "expo-sqlite",
       [
+        "expo-media-library",
+        {
+          "photosPermission": "활동 중 촬영한 사진을 이동 경로와 함께 영상으로 만들기 위해 사진 보관함을 읽습니다."
+        }
+      ],
+      [
         "expo-location",
         {
           "locationWhenInUsePermission": "이동 경로를 기록해 활동 영상을 자동으로 만들기 위해 위치를 사용합니다.",

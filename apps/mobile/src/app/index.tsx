@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Link } from 'expo-router';
 import { color, radius, spacing, typography } from '@vobby/ui-tokens';
 import { useRecording } from '@/features/recording/use-recording';
 
@@ -60,6 +61,12 @@ export default function RecordingScreen() {
       )}
 
       {error && <Text style={styles.error}>{error}</Text>}
+
+      <Link href="/sessions" asChild>
+        <Pressable testID="sessions-link">
+          <Text style={styles.link}>지난 기록 보기</Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }
@@ -87,6 +94,7 @@ const styles = StyleSheet.create({
   body: { ...typography.body, color: color.textPrimary } as const,
   caption: { ...typography.caption, color: color.textSecondary } as const,
   error: { ...typography.body, color: color.danger } as const,
+  link: { ...typography.body, color: color.info, textAlign: 'center' } as const,
   card: {
     backgroundColor: color.bgSubtle,
     borderRadius: radius.lg,
