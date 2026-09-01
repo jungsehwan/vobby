@@ -9,3 +9,6 @@ open_clip_torch==3.3.0
 pillow==12.3.0
 opencv-python-headless==5.0.0.93
 psycopg[binary]==3.3.5
+# audio-beat
+librosa==0.11.0
+soundfile==0.14.0

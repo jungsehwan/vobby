@@ -43,7 +43,7 @@
 |---|--------|------|--------|------|------|
 | 8 | Vision AI 미디어 스코어링 (`vision-scoring`) | Plan | Design | Impl | CLIP 제로샷(심미·카테고리)+Laplacian 블러, media.vision_score 기록, 실패 격리. 2026-09-01 (A등급) |
 | 9 | 궤적 클러스터링·POI 추출 (`spatial-poi`) | Plan | Design | Impl | 사진 좌표 시공간 클러스터링(start/spot/end)→trips.pois. 2026-09-01 (A등급) |
-| 10 | BGM 비트/온셋 감지 (`audio-beat`) | - | - | - | BPM, Drop 구간 |
+| 10 | BGM 비트/온셋 감지 (`audio-beat`) | Plan | Design | Impl | librosa BPM·비트·온셋 + RMS 클라이맥스(EDL 입력 계약 확정). 2026-09-01 (A등급) — **마일스톤 3 종료** |
 
 ### 마일스톤 4 — 시나리오 디렉팅 & 렌더러
 
