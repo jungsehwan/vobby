@@ -14,7 +14,8 @@
 |------|------|------|------|
 | Mobile App | React Native (Expo) + TypeScript | Expo SDK 최신 안정판 | iOS/Android 크로스플랫폼, 백그라운드 GPS 로깅, 갤러리 EXIF 추출 |
 | User Web / Admin Web | Next.js (App Router) + TypeScript | Next 15.x | 숏폼 웹 뷰어, SNS OpenGraph, 관리자 대시보드 |
-| Main API | Node.js (NestJS) + TypeScript | Node 25.x | OAuth2/JWT 인증, 비즈니스 CRUD, 숏폼 생성 요청 큐잉 |
+| Main API | Node.js (NestJS) + TypeScript | Node 25.x | OAuth2/JWT 인증(Google·Kakao — 2026-09-01 확정), 비즈니스 CRUD, 숏폼 생성 요청 큐잉 |
+| ORM | TypeORM | — | PostGIS geometry/geography 직접 매핑 (2026-09-01 확정). 마이그레이션만 사용, synchronize 금지 |
 | AI/Video Worker | Python (FastAPI + Celery) | Python 3.11 | Vision AI(CLIP/VLM), PostGIS 궤적 분석, FFmpeg 렌더링 |
 | Database | PostgreSQL + PostGIS | 18 + PostGIS 3.6 | 회원/메타데이터 + GPS 궤적(LineString) 공간 인덱싱. 로컬은 Docker `vobby-db` **:5433** |
 | Queue/Cache | Redis | 8.x | Celery 작업 큐, 렌더링 진행률 캐싱. 로컬은 Docker `vobby-redis` **:6380** |
@@ -62,7 +63,7 @@ Python 워커는 `services/ai-pipeline/` 자체 venv + 버전 고정 `requiremen
 | ShortForm | PostgreSQL + S3 | 숏폼 | 생성된 영상 메타데이터, EDL, 렌더링 상태, 공유 URL |
 | RenderJob | Redis | 파이프라인 | Celery 작업 상태·진행률 (휘발성) |
 
-상세 스키마는 마일스톤 1(`infra-foundation`) Design 문서에서 확정 — 확정 후 `docs/references/db-schema.md` 신설 예정.
+상세 스키마: `docs/references/db-schema.md` (2026-09-01 신설). 궤적은 `geography(LineStringZM)` 단일 컬럼 — Z=고도, M=epoch초.
 
 ## 4. 숏폼 생성 파이프라인 (핵심 엔진)
 

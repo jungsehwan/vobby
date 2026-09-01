@@ -35,7 +35,7 @@
 ## 3. 디렉토리/모듈 배치 규칙
 - 기능 코드는 해당 워크스페이스 내부에만 — 워크스페이스 간 직접 상대경로 import 금지, `packages/*` 경유
 - `apps/mobile`: 화면은 `app/`(expo-router), 로직은 `src/features/{도메인}/` (hooks/services/components)
-- `services/main-api`: NestJS 도메인 모듈 단위 (`src/{도메인}/` 아래 controller/service/entity/dto)
+- `services/main-api`: 도메인은 `src/domain/{도메인}/` (entity/service/controller/dto), 인프라는 `src/database/`(DataSource·마이그레이션)·`src/config/` — db-schema-foundation에서 확정된 실구조
 - `services/ai-pipeline`: 파이프라인 단계별 패키지 고정 — `vision/`, `spatial/`, `director/`, `renderer/` + 공용은 `common/`
 
 ## 4. 상태관리 패턴
@@ -44,7 +44,7 @@
 - 렌더링 진행률 등 실시간 값: 폴링 훅으로 캡슐화 (`useRenderProgress`) — 화면에서 직접 인터벌 관리 금지
 
 ## 5. 데이터 접근 패턴
-- Main API: TypeORM(또는 Prisma — 마일스톤 1에서 확정) 리포지토리를 서비스 계층에서만 사용, 컨트롤러에서 직접 쿼리 금지
+- Main API: TypeORM(2026-09-01 확정) 리포지토리를 서비스 계층에서만 사용, 컨트롤러에서 직접 쿼리 금지
 - 공간 쿼리(PostGIS)는 전용 리포지토리 메서드로 격리 (`trajectory.repository.ts`) — raw SQL 산재 금지
 - Python 워커의 DB 접근은 읽기 전용을 기본으로, 쓰기는 상태 갱신 테이블에 한정 (소유권: 스키마 변경은 Main API 쪽 마이그레이션이 단일 소스)
 

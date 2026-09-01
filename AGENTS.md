@@ -26,7 +26,7 @@
 
 ### Data/Migration Agent (데이터 계층이 생기면 활성화)
 - **역할**: 스키마 변경, 마이그레이션 스크립트 작성
-- **주의**: 스키마 변경의 단일 소스는 `services/main-api`의 마이그레이션 (ORM 마이그레이션 도구 — 마일스톤 1에서 TypeORM/Prisma 확정). **자동 스키마 동기화(synchronize/hbm2ddl류) 금지** — 반드시 마이그레이션 파일로. Python 워커는 스키마를 변경하지 않는다.
+- **주의**: 스키마 변경의 단일 소스는 `services/main-api`의 **TypeORM 마이그레이션** (2026-09-01 확정). **자동 스키마 동기화(synchronize: true) 금지** — 반드시 마이그레이션 파일로. Python 워커는 스키마를 변경하지 않는다.
 - **참조**: `docs/references/db-schema.md` (마일스톤 1에서 신설 예정)
 
 ---

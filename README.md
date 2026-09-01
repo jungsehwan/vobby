@@ -42,7 +42,7 @@ Stack(웹서비스) 프로젝트 하네스의 프로세스 층 위에서 시작�
 - [x] 앱 플랫폼/스택 → RN(Expo)+Next.js+NestJS+Python — `ARCHITECTURE.md` §1
 - [x] 빌드·실행·검증 명령 → npm workspaces 기반 — `CLAUDE.md` §빌드, commit 스킬 §1, `QUALITY.md` §1
 - [x] 실행 검증 수단 → 대상별(시뮬레이터/브라우저/실호출/샘플 태스크) — `CLAUDE.md` 검증 §3
-- [ ] 스키마 관리 방식 — 마이그레이션 도구(TypeORM vs Prisma)는 마일스톤 1 `db-schema-foundation`에서 확정 → `AGENTS.md` Data agent
+- [x] 스키마 관리 방식 — TypeORM 마이그레이션 (2026-09-01 확정, synchronize 금지) → `AGENTS.md` Data agent
 - [x] lock 파일 커밋 + CI는 `npm ci` / Python은 고정 버전 requirements.txt → `CLAUDE.md` §의존성
 - [ ] API 인터페이스 참조 문서 — Main API 첫 엔드포인트 구현 시 `docs/references/`에 신설
 - [ ] 로컬 Object Storage 수단 (MinIO 후보) — 미디어 업로드 기능 착수 전 확정
