@@ -1,83 +1,79 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Link } from 'expo-router';
 import { color, radius, spacing, typography } from '@vobby/ui-tokens';
-import { useRecording } from '@/features/recording/use-recording';
+import { useTrips } from '@/features/trips/use-trips';
 
-function formatElapsed(totalS: number): string {
-  const h = Math.floor(totalS / 3600);
-  const m = Math.floor((totalS % 3600) / 60);
-  const s = totalS % 60;
-  return h > 0 ? `${h}시간 ${m}분` : `${m}분 ${s}초`;
+function formatRange(startS: number, endS: number): string {
+  const s = new Date(startS * 1000);
+  const e = new Date(endS * 1000);
+  const d = (x: Date) => `${x.getMonth() + 1}.${x.getDate()}`;
+  return d(s) === d(e) ? d(s) : `${d(s)} ~ ${d(e)}`;
 }
 
-export default function RecordingScreen() {
-  const { permission, session, stats, error, askPermission, start, stop } =
-    useRecording();
+export default function TripsScreen() {
+  const { trips, scanning, progress, lastResult, error, scan } = useTrips();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>경로 기록</Text>
+      <Text style={styles.title}>내 여행</Text>
 
-      {permission === 'unknown' && <Text style={styles.caption}>권한 확인 중…</Text>}
-
-      {(permission === 'denied' || permission === 'foreground-only') && (
-        <View style={styles.card}>
-          <Text style={styles.body}>
-            {permission === 'denied'
-              ? '이동 경로를 기록하려면 위치 권한이 필요합니다.'
-              : '백그라운드 기록을 위해 위치 권한을 "항상 허용"으로 설정해 주세요.'}
-          </Text>
-          <Pressable style={styles.button} onPress={askPermission}>
-            <Text style={styles.buttonLabel}>위치 권한 허용하기</Text>
-          </Pressable>
-        </View>
-      )}
-
-      {permission === 'granted' && !session && (
-        <Pressable style={styles.button} onPress={start} testID="start-button">
-          <Text style={styles.buttonLabel}>기록 시작</Text>
-        </Pressable>
-      )}
-
-      {session && (
-        <View style={styles.card}>
-          <Text style={styles.heading}>기록 중</Text>
-          <View style={styles.statRow}>
-            <Stat label="포인트" value={String(stats?.pointCount ?? 0)} />
-            <Stat
-              label="거리"
-              value={`${((stats?.distanceM ?? 0) / 1000).toFixed(2)} km`}
-            />
-            <Stat label="경과" value={formatElapsed(stats?.elapsedS ?? 0)} />
+      <Pressable
+        style={[styles.button, scanning && styles.buttonDisabled]}
+        onPress={scan}
+        disabled={scanning}
+        testID="scan-button"
+      >
+        {scanning ? (
+          <View style={styles.scanRow}>
+            <ActivityIndicator color={color.textInverse} />
+            <Text style={styles.buttonLabel}>스캔 중… ({progress}페이지)</Text>
           </View>
-          <Pressable
-            style={[styles.button, styles.stopButton]}
-            onPress={stop}
-            testID="stop-button"
-          >
-            <Text style={styles.buttonLabel}>기록 중지</Text>
-          </Pressable>
-        </View>
-      )}
+        ) : (
+          <Text style={styles.buttonLabel}>사진 스캔해서 여행 만들기</Text>
+        )}
+      </Pressable>
 
+      {lastResult && (
+        <Text style={styles.caption} testID="scan-summary">
+          사진 {lastResult.total}장 (신규 {lastResult.added}) → 여행{' '}
+          {lastResult.tripCount}개
+        </Text>
+      )}
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <Link href="/sessions" asChild>
-        <Pressable testID="sessions-link">
-          <Text style={styles.link}>지난 기록 보기</Text>
-        </Pressable>
-      </Link>
-    </View>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.stat}>
-      <Text style={styles.statValue} testID={`stat-${label}`}>
-        {value}
-      </Text>
-      <Text style={styles.caption}>{label}</Text>
+      {trips.length === 0 && !scanning ? (
+        <Text style={styles.caption}>
+          사진을 스캔하면 여행이 자동으로 만들어져요.
+        </Text>
+      ) : (
+        <FlatList
+          data={trips}
+          keyExtractor={(t) => t.id}
+          contentContainerStyle={{ gap: spacing.md }}
+          renderItem={({ item }) => (
+            <Link href={{ pathname: '/trip/[id]', params: { id: item.id } }} asChild>
+              <Pressable style={styles.card} testID={`trip-${item.id}`}>
+                <Text style={styles.body}>
+                  {formatRange(item.started_at, item.ended_at)} 여행
+                </Text>
+                <Text style={styles.caption}>
+                  사진 {item.media_count}장
+                  {item.distance_m !== null
+                    ? ` · 약 ${(item.distance_m / 1000).toFixed(1)}km`
+                    : ''}
+                </Text>
+              </Pressable>
+            </Link>
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -86,32 +82,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: color.bgBase,
-    padding: spacing.xl,
-    gap: spacing.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   title: { ...typography.title, color: color.textPrimary } as const,
-  heading: { ...typography.heading, color: color.textPrimary } as const,
   body: { ...typography.body, color: color.textPrimary } as const,
   caption: { ...typography.caption, color: color.textSecondary } as const,
   error: { ...typography.body, color: color.danger } as const,
-  link: { ...typography.body, color: color.info, textAlign: 'center' } as const,
-  card: {
-    backgroundColor: color.bgSubtle,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.lg,
-    borderWidth: 1,
-    borderColor: color.border,
-  },
   button: {
     backgroundColor: color.primary,
     borderRadius: radius.md,
     paddingVertical: spacing.md,
     alignItems: 'center',
   },
-  stopButton: { backgroundColor: color.danger },
+  buttonDisabled: { opacity: 0.7 },
   buttonLabel: { ...typography.heading, color: color.textInverse } as const,
-  statRow: { flexDirection: 'row', justifyContent: 'space-around' },
-  stat: { alignItems: 'center', gap: spacing.xs },
-  statValue: { ...typography.heading, color: color.primary } as const,
+  scanRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
+  card: {
+    backgroundColor: color.bgSubtle,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: color.border,
+  },
 });
