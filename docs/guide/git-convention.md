@@ -48,4 +48,7 @@ docs: 커밋 규칙 문서 추가
 
 ## 5. 실행 절차
 
-`/commit` 스킬(`.claude/skills/commit/SKILL.md`)이 위 규칙대로 검증→메시지 정리→커밋을 수행한다.
+1. **`/readycommit`** — 커밋 전 코드 정리·검토: 불필요 주석 제거, 버그 중심 리뷰, DESIGN.md 컨벤션 검증 (`.claude/skills/readycommit/SKILL.md`)
+2. **`/commit`** — 빌드·실행 검증 → 메시지 정리 → 커밋 (`.claude/skills/commit/SKILL.md`)
+
+코드 변경 커밋은 1→2 순서를 기본으로 한다. 문서만 변경 시 `/commit` 단독 가능.
