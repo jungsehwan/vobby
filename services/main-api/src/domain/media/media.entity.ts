@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../user/user.entity.js';
 import { Trajectory } from '../trajectory/trajectory.entity.js';
-import type { GeoPoint } from '../geo.types.js';
+import type { GeoPoint } from '@vobby/shared-types';
 
 export type MediaType = 'photo' | 'video';
 

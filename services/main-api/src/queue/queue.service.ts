@@ -1,3 +1,4 @@
+import type { TaskProgress } from '@vobby/shared-types';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Redis } from 'ioredis';
 import { CeleryProducer } from './celery-producer.js';
@@ -5,12 +6,6 @@ import { PROGRESS_REDIS } from './queue.tokens.js';
 
 /** 워커(common/progress.py)와 공유하는 키 규약 */
 const PROGRESS_KEY_PREFIX = 'vobby:progress:';
-
-export interface TaskProgress {
-  status: string;
-  detail: unknown;
-  updatedAt: string;
-}
 
 @Injectable()
 export class QueueService {

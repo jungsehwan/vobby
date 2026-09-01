@@ -11,13 +11,10 @@ import {
 import { User } from '../user/user.entity.js';
 import { Trajectory } from '../trajectory/trajectory.entity.js';
 
-/** 렌더링 상태 머신 — 파이프라인 단계와 1:1 (기획 §2) */
-export type ShortFormStatus =
-  | 'requested'
-  | 'analyzing'
-  | 'rendering'
-  | 'done'
-  | 'failed';
+import type { ShortFormStatus } from '@vobby/shared-types';
+
+/** 상태 머신 타입은 와이어 계약(@vobby/shared-types) 소유 — CHECK 제약과 동기 유지 */
+export type { ShortFormStatus };
 
 @Entity('short_forms')
 @Index('ix_short_forms_user_created', ['userId', 'createdAt'])

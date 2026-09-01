@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-/** OAuth 제공자 — 확장 시 마이그레이션에서 CHECK 제약도 함께 교체 (design §0-3) */
-export type AuthProvider = 'google' | 'kakao';
+import type { AuthProvider } from '@vobby/shared-types';
+
+/** AuthProvider는 와이어 계약(@vobby/shared-types) 소유 — 확장 시 users CHECK 제약도 함께 교체 */
+export type { AuthProvider };
 
 @Entity('users')
 @Unique('uq_users_provider_uid', ['provider', 'providerUid'])

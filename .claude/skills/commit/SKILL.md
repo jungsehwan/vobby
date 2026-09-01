@@ -19,8 +19,8 @@ description: >-
 ## 1. 최종 검증 (CLAUDE.md 검증 절차 준수 — 생략 불가)
 > 빌드 통과만으로 커밋 금지. 코드 → 빌드 → 실행 검증 순서를 지킨다.
 
-- 컴파일/타입체크: `npm run typecheck --workspaces --if-present` (+ Python 변경 시 `python -m compileall .`)
-- 전체 빌드 (해당 시): `npm run build --workspaces --if-present`
+- 컴파일/타입체크: `npm run typecheck` (루트 — packages 빌드 선행 포함. Python 변경 시 + `python -m compileall .`)
+- 전체 빌드 (해당 시): `npm run build`
 - 실행 검증: 변경 대상별 수단으로 화면·동작 확인 — 모바일=시뮬레이터/Expo Go, 웹=브라우저, API=실호출, 워커=샘플 태스크 실행 (CLAUDE.md §개발 후 검증 절차)
 - 실행 환경을 못 띄우는 상황이면 **커밋 보류**하고 사용자에게 알린다.
 

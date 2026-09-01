@@ -51,7 +51,7 @@ diff를 정독하고 다음 관점으로 결함을 찾는다. 발견 시 **직�
 - 새 패턴 도입이 보이면: DESIGN.md 갱신이 함께 있는지 확인 — 없으면 지적
 
 ## 4. 마무리
-1. 수정을 적용했다면 컴파일 재검증: `npm run typecheck --workspaces --if-present` (+ Python 변경 시 `compileall`)
+1. 수정을 적용했다면 컴파일 재검증: `npm run typecheck` (루트, + Python 변경 시 `compileall`)
 2. 결과 보고 형식:
    ```
    주석: 제거 N건 / 보존 판단 N건

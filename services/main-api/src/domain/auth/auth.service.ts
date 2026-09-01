@@ -1,11 +1,12 @@
 import { createHash, randomBytes } from 'node:crypto';
+import type { LoginResponse, TokenPair } from '@vobby/shared-types';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { UsersService } from '../user/users.service.js';
-import type { AuthProvider, User } from '../user/user.entity.js';
+import type { AuthProvider } from '../user/user.entity.js';
 import { RefreshToken } from './refresh-token.entity.js';
 import { InvalidRefreshTokenException } from './exceptions.js';
 import {
@@ -13,15 +14,6 @@ import {
   KAKAO_VERIFIER,
   type ProviderVerifier,
 } from './verifiers/provider-verifier.interface.js';
-
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface LoginResult extends TokenPair {
-  user: Pick<User, 'id' | 'provider' | 'nickname' | 'email' | 'avatarUrl'>;
-}
 
 const DEFAULT_REFRESH_TTL_DAYS = 30;
 
@@ -43,7 +35,7 @@ export class AuthService {
     );
   }
 
-  async login(provider: AuthProvider, token: string): Promise<LoginResult> {
+  async login(provider: AuthProvider, token: string): Promise<LoginResponse> {
     const verifier =
       provider === 'google' ? this.googleVerifier : this.kakaoVerifier;
     const profile = await verifier.verify(token);

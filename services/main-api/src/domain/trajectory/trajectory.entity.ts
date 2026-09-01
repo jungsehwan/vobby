@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity.js';
-import type { GeoLineStringZM } from '../geo.types.js';
+import type { GeoLineStringZM } from '@vobby/shared-types';
 
 /** 활동 1회의 GPS 궤적. path에 시각(M)·고도(Z)를 내장한다 (design §0-1) */
 @Entity('trajectories')

@@ -86,8 +86,8 @@ pkill -f "next dev" 2>/dev/null; pkill -f "nest start" 2>/dev/null
 
 ```bash
 # ── TypeScript 워크스페이스 (루트에서) ──
-# 컴파일/타입체크만 (가장 빠른 검증)
-npm run typecheck --workspaces --if-present
+# 컴파일/타입체크만 (가장 빠른 검증 — packages 빌드 선행 포함)
+npm run typecheck
 
 # 전체 빌드 (web/admin/main-api)
 npm run build --workspaces --if-present
