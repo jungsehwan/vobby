@@ -39,6 +39,7 @@
 - `services/main-api`: 도메인은 `src/domain/{도메인}/` (entity/service/controller/dto), 인프라는 `src/database/`(DataSource·마이그레이션)·`src/queue/`(Celery 발행) — 실구조 기준
 - ESM 주의: 모듈↔서비스 상호 참조 금지 — 공유 DI 토큰은 `*.tokens.ts`로 분리 (순환 import TDZ 사고, queue-worker-foundation)
 - 검증/운영 스크립트는 `scripts/` (tsconfig.build 제외 영역) — npm 스크립트로 진입점 노출
+- NestJS: `JwtAuthGuard`를 쓰는 모든 모듈은 `PassportModule.register({defaultStrategy:'jwt'})`를 import — 누락 시 부팅 DI 실패 (auth·trip에서 2회 발생)
 - `services/ai-pipeline`: 파이프라인 단계별 패키지 고정 — `vision/`, `spatial/`, `director/`, `renderer/` + 공용은 `common/`
 
 ## 4. 상태관리 패턴

@@ -25,6 +25,10 @@ export class Trip {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
+  /** 모바일의 결정적 여행 id — (user_id, client_key) UNIQUE 멱등키 */
+  @Column({ name: 'client_key', type: 'text' })
+  clientKey!: string;
+
   /** AI 자동 생성 여행 타이틀 */
   @Column({ type: 'text', nullable: true })
   title!: string | null;

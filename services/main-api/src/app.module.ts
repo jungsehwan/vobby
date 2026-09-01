@@ -6,6 +6,7 @@ import { AuthModule } from './domain/auth/auth.module.js';
 import { UsersModule } from './domain/user/users.module.js';
 import { QueueModule } from './queue/queue.module.js';
 import { ShortFormModule } from './domain/short-form/short-form.module.js';
+import { TripModule } from './domain/trip/trip.module.js';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ShortFormModule } from './domain/short-form/short-form.module.js';
     AuthModule,
     QueueModule,
     ShortFormModule,
+    TripModule,
   ],
 })
 export class AppModule {}

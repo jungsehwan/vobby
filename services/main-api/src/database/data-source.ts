@@ -7,6 +7,7 @@ import { Media } from '../domain/media/media.entity.js';
 import { ShortForm } from '../domain/short-form/short-form.entity.js';
 import { RefreshToken } from '../domain/auth/refresh-token.entity.js';
 import { InitialSchema1788240000000 } from './migrations/1788240000000-InitialSchema.js';
+import { AddTripClientKey1788250000000 } from './migrations/1788250000000-AddTripClientKey.js';
 
 // 미설정 시 pg가 기본값(localhost:5432 — 이 머신에선 타 프로젝트 PG15)으로
 // 조용히 붙는 사고를 막기 위해 명시적으로 실패시킨다
@@ -23,7 +24,7 @@ export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   url: databaseUrl,
   entities: [User, Trip, Media, ShortForm, RefreshToken],
-  migrations: [InitialSchema1788240000000],
+  migrations: [InitialSchema1788240000000, AddTripClientKey1788250000000],
   synchronize: false,
   logging: ['error', 'warn', 'migration'],
 };

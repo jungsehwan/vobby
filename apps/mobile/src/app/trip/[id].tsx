@@ -1,8 +1,19 @@
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import type { MediaCoordSource } from '@vobby/shared-types';
 import { color, radius, spacing, typography } from '@vobby/ui-tokens';
 import { getTrip, getTripMedia } from '@/features/trips/trips-db';
+import { uploadTrip } from '@/features/trips/trip-upload.service';
+import { ApiError } from '@/lib/api-client';
 
 const SOURCE_LABEL: Record<MediaCoordSource, string> = {
   exif: 'EXIF',
@@ -15,10 +26,33 @@ function formatTime(epochS: number): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+type UploadState =
+  | { phase: 'idle' }
+  | { phase: 'uploading' }
+  | { phase: 'done' }
+  | { phase: 'error'; message: string };
+
 export default function TripDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const trip = getTrip(id);
   const media = getTripMedia(id);
+  const [upload, setUpload] = useState<UploadState>({ phase: 'idle' });
+
+  const onUpload = useCallback(async () => {
+    setUpload({ phase: 'uploading' });
+    try {
+      await uploadTrip(id);
+      setUpload({ phase: 'done' });
+    } catch (e) {
+      const message =
+        e instanceof ApiError && e.code === 'AUTH_REQUIRED'
+          ? '로그인 후 이용할 수 있어요.'
+          : e instanceof Error
+            ? e.message
+            : String(e);
+      setUpload({ phase: 'error', message });
+    }
+  }, [id]);
 
   if (!trip) {
     return (
@@ -37,6 +71,24 @@ export default function TripDetailScreen() {
           ? ` · 약 ${(trip.distance_m / 1000).toFixed(1)}km`
           : ''}
       </Text>
+
+      <Pressable
+        style={[styles.uploadButton, upload.phase === 'uploading' && styles.uploadDisabled]}
+        onPress={onUpload}
+        disabled={upload.phase === 'uploading'}
+        testID="upload-button"
+      >
+        {upload.phase === 'uploading' ? (
+          <ActivityIndicator color={color.textInverse} />
+        ) : (
+          <Text style={styles.uploadLabel}>
+            {upload.phase === 'done' ? '서버에 저장됨 ✓' : '서버에 올리기'}
+          </Text>
+        )}
+      </Pressable>
+      {upload.phase === 'error' && (
+        <Text style={styles.error} testID="upload-error">{upload.message}</Text>
+      )}
 
       <FlatList
         data={media}
@@ -70,6 +122,15 @@ const styles = StyleSheet.create({
   },
   body: { ...typography.body, color: color.textPrimary } as const,
   caption: { ...typography.caption, color: color.textSecondary } as const,
+  error: { ...typography.caption, color: color.danger } as const,
+  uploadButton: {
+    backgroundColor: color.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  uploadDisabled: { opacity: 0.7 },
+  uploadLabel: { ...typography.heading, color: color.textInverse } as const,
   row: {
     flexDirection: 'row',
     gap: spacing.md,
