@@ -41,7 +41,7 @@
 
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
-| 8 | Vision AI 미디어 스코어링 (`vision-scoring`) | - | - | - | CLIP/VLM |
+| 8 | Vision AI 미디어 스코어링 (`vision-scoring`) | Plan | Design | Impl | CLIP 제로샷(심미·카테고리)+Laplacian 블러, media.vision_score 기록, 실패 격리. 2026-09-01 (A등급) |
 | 9 | 궤적 클러스터링·POI 추출 (`spatial-poi`) | - | - | - | PostGIS |
 | 10 | BGM 비트/온셋 감지 (`audio-beat`) | - | - | - | BPM, Drop 구간 |
 
