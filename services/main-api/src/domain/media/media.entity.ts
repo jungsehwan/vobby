@@ -9,13 +9,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity.js';
-import { Trajectory } from '../trajectory/trajectory.entity.js';
-import type { GeoPoint } from '@vobby/shared-types';
+import { Trip } from '../trip/trip.entity.js';
+import type { GeoPoint, MediaCoordSource } from '@vobby/shared-types';
 
 export type MediaType = 'photo' | 'video';
 
 @Entity('media')
-@Index('ix_media_trajectory_captured', ['trajectoryId', 'capturedAt'])
+@Index('ix_media_trip_captured', ['tripId', 'capturedAt'])
 export class Media {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -27,13 +27,13 @@ export class Media {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  /** Time-Sync 매칭 전에는 미연결 상태로 존재 (기획 Phase 1) */
-  @Column({ name: 'trajectory_id', type: 'uuid', nullable: true })
-  trajectoryId!: string | null;
+  /** 미디어는 여행 소속으로만 업로드된다 (design §1) */
+  @Column({ name: 'trip_id', type: 'uuid' })
+  tripId!: string;
 
-  @ManyToOne(() => Trajectory, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'trajectory_id' })
-  trajectory!: Trajectory | null;
+  @ManyToOne(() => Trip, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'trip_id' })
+  trip!: Trip;
 
   @Column({ type: 'text' })
   type!: MediaType;
@@ -41,7 +41,7 @@ export class Media {
   @Column({ name: 'captured_at', type: 'timestamptz' })
   capturedAt!: Date;
 
-  /** EXIF에 위경도가 없는 미디어 존재 */
+  /** EXIF에 위경도가 없는 미디어 존재 — source로 출처 구분 */
   @Column({
     type: 'geography',
     spatialFeatureType: 'Point',
@@ -49,6 +49,10 @@ export class Media {
     nullable: true,
   })
   location!: GeoPoint | null;
+
+  /** 좌표 출처 — 모바일 로컬 매칭 규약과 동일 (@vobby/shared-types) */
+  @Column({ type: 'text' })
+  source!: MediaCoordSource;
 
   @Column({ type: 'integer', nullable: true })
   width!: number | null;

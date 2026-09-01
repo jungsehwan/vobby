@@ -11,10 +11,10 @@ import {
 import { User } from '../user/user.entity.js';
 import type { GeoLineStringZM } from '@vobby/shared-types';
 
-/** 활동 1회의 GPS 궤적. path에 시각(M)·고도(Z)를 내장한다 (design §0-1) */
-@Entity('trajectories')
-@Index('ix_trajectories_user_started', ['userId', 'startedAt'])
-export class Trajectory {
+/** 사진 EXIF·외부 이력으로 재구성된 여행 — 기록이 아니라 소싱 결과 (design §0-2) */
+@Entity('trips')
+@Index('ix_trips_user_started', ['userId', 'startedAt'])
+export class Trip {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -25,35 +25,32 @@ export class Trajectory {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  /** AI 자동 생성 활동 타이틀 (Intro 연출용) */
+  /** AI 자동 생성 여행 타이틀 */
   @Column({ type: 'text', nullable: true })
   title!: string | null;
 
-  @Column({
-    type: 'geography',
-    spatialFeatureType: 'LineStringZM',
-    srid: 4326,
-  })
-  path!: GeoLineStringZM;
-
+  /** 사진 시각 범위 */
   @Column({ name: 'started_at', type: 'timestamptz' })
   startedAt!: Date;
 
   @Column({ name: 'ended_at', type: 'timestamptz' })
   endedAt!: Date;
 
-  /** Outro 통계 — 저장 시 계산해 확정 (재계산 비용 회피) */
-  @Column({ name: 'distance_m', type: 'double precision' })
-  distanceM!: number;
+  /** GPS 사진의 시간순 좌표 시퀀스 근사 — GPS 사진 0장이면 NULL */
+  @Column({
+    type: 'geography',
+    spatialFeatureType: 'LineStringZM',
+    srid: 4326,
+    nullable: true,
+  })
+  path!: GeoLineStringZM | null;
 
-  @Column({ name: 'elevation_gain_m', type: 'double precision' })
-  elevationGainM!: number;
+  @Column({ name: 'distance_m', type: 'double precision', nullable: true })
+  distanceM!: number | null;
 
-  @Column({ name: 'duration_s', type: 'integer' })
-  durationS!: number;
-
-  @Column({ name: 'point_count', type: 'integer' })
-  pointCount!: number;
+  /** 비정규화 — 목록 조회 최적화, 업로드 API가 관리 */
+  @Column({ name: 'media_count', type: 'integer', default: 0 })
+  mediaCount!: number;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;

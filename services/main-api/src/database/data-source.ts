@@ -2,12 +2,11 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { User } from '../domain/user/user.entity.js';
-import { Trajectory } from '../domain/trajectory/trajectory.entity.js';
+import { Trip } from '../domain/trip/trip.entity.js';
 import { Media } from '../domain/media/media.entity.js';
 import { ShortForm } from '../domain/short-form/short-form.entity.js';
 import { RefreshToken } from '../domain/auth/refresh-token.entity.js';
-import { InitialSchema1788220800000 } from './migrations/1788220800000-InitialSchema.js';
-import { RefreshTokens1788230400000 } from './migrations/1788230400000-RefreshTokens.js';
+import { InitialSchema1788240000000 } from './migrations/1788240000000-InitialSchema.js';
 
 // 미설정 시 pg가 기본값(localhost:5432 — 이 머신에선 타 프로젝트 PG15)으로
 // 조용히 붙는 사고를 막기 위해 명시적으로 실패시킨다
@@ -23,8 +22,8 @@ if (!databaseUrl) {
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   url: databaseUrl,
-  entities: [User, Trajectory, Media, ShortForm, RefreshToken],
-  migrations: [InitialSchema1788220800000, RefreshTokens1788230400000],
+  entities: [User, Trip, Media, ShortForm, RefreshToken],
+  migrations: [InitialSchema1788240000000],
   synchronize: false,
   logging: ['error', 'warn', 'migration'],
 };

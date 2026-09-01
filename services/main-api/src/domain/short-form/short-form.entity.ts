@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity.js';
-import { Trajectory } from '../trajectory/trajectory.entity.js';
+import { Trip } from '../trip/trip.entity.js';
 
 import type { ShortFormStatus } from '@vobby/shared-types';
 
@@ -29,12 +29,12 @@ export class ShortForm {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @Column({ name: 'trajectory_id', type: 'uuid' })
-  trajectoryId!: string;
+  @Column({ name: 'trip_id', type: 'uuid' })
+  tripId!: string;
 
-  @ManyToOne(() => Trajectory, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'trajectory_id' })
-  trajectory!: Trajectory;
+  @ManyToOne(() => Trip, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'trip_id' })
+  trip!: Trip;
 
   @Column({ type: 'text', default: 'requested' })
   status!: ShortFormStatus;
