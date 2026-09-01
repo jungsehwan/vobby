@@ -19,7 +19,7 @@
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
 | 1 | DB 스키마 설계 — User/Trajectory/Media/ShortForm (`db-schema-foundation`) | Plan | Design | Impl | TypeORM+uuidv7+LineStringZM. 2026-09-01 완료 (A등급) |
-| 2 | Main API 골격 + 인증(OAuth2/JWT) (`api-auth-foundation`) | - | - | - | NestJS 부트스트랩 포함 |
+| 2 | Main API 골격 + 인증(OAuth2/JWT) (`api-auth-foundation`) | Plan | Design | Impl | Google·Kakao 재검증 + refresh 회전. 2026-09-01 완료 (A등급). 실토큰 E2E는 콘솔 앱 등록 후 |
 | 3 | Redis 작업 큐 + Celery 워커 골격 (`queue-worker-foundation`) | - | - | - | API→큐→워커 왕복 검증까지 |
 
 ### 마일스톤 2 — 클라이언트 & 미디어 인제스트

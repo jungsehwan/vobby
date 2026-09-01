@@ -2,7 +2,7 @@
 
 > 진실 소스: `services/main-api/src/database/migrations/` — 이 문서는 요약본.
 > 스키마 변경 시 이 문서를 함께 갱신한다 (CLAUDE.md §push 시 문서 업데이트 규칙).
-> 최종 갱신: 2026-09-01 (InitialSchema)
+> 최종 갱신: 2026-09-01 (RefreshTokens — api-auth-foundation)
 
 ## 공통 규약
 
@@ -66,6 +66,17 @@
 | error_message | text NULL | failed 사유 |
 
 - `ix_short_forms_user_created` (user_id, created_at DESC)
+
+### refresh_tokens — 인증 refresh 토큰 (해시만)
+| 컬럼 | 타입 | 비고 |
+|------|------|------|
+| id | uuid PK | |
+| user_id | uuid FK→users | CASCADE |
+| token_hash | text UNIQUE | **sha256 해시만 — 평문 저장 금지** |
+| expires_at | timestamptz | 30d (env REFRESH_TTL_DAYS) |
+| revoked_at | timestamptz NULL | 회전/로그아웃 시각, NULL=유효 후보 |
+
+- `ix_refresh_tokens_user` (user_id). 회전(rotation): refresh 시 기존 revoke 후 신규 발급
 
 ## RDB 비대상
 
