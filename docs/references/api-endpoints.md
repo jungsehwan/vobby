@@ -15,6 +15,13 @@
 | POST `/auth/logout` | refresh 토큰 | `{ refreshToken }` | 204 (멱등) | — |
 | GET `/me` | Bearer JWT | — | `PublicUser` | 401 (무토큰/위조), 401 `AUTH_USER_NOT_FOUND` |
 
+## 여행 (trip-upload)
+
+| 메서드/경로 | 인증 | 요청/응답 | 주요 에러 |
+|---|---|---|---|
+| POST `/v1/trips` | Bearer JWT | `TripUploadRequest` → `TripSummary`. **(user, clientKey) 멱등 upsert** — 재업로드 시 여행 갱신 + 미디어 전량 교체. path는 LineStringZM | 400 `TRIP_INVALID_PATH`, 401 |
+| GET `/v1/trips` | Bearer JWT | `TripSummary[]` (started_at DESC) | 401 |
+
 ## 숏폼 (web-viewer-base)
 
 | 메서드/경로 | 인증 | 응답 | 주요 에러 |

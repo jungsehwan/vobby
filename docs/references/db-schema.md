@@ -29,6 +29,7 @@
 |------|------|------|
 | id | uuid PK | |
 | user_id | uuid FK→users | ON DELETE CASCADE |
+| client_key | text | UNIQUE(user_id, client_key) — 모바일 결정적 id, 업로드 멱등키 (trip-upload) |
 | title | text NULL | AI 생성 여행 타이틀 |
 | started_at / ended_at | timestamptz | 사진 시각 범위 |
 | path | geography(LineStringZM, 4326) **NULL** | GPS 사진 시간순 시퀀스 근사 — GPS 사진 0장이면 NULL |
