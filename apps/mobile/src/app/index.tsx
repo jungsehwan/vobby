@@ -22,7 +22,14 @@ export default function TripsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>내 여행</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>내 여행</Text>
+        <Link href="/import" asChild>
+          <Pressable testID="import-link">
+            <Text style={styles.headerLink}>위치 이력</Text>
+          </Pressable>
+        </Link>
+      </View>
 
       <Pressable
         style={[styles.button, scanning && styles.buttonDisabled]}
@@ -86,6 +93,12 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   title: { ...typography.title, color: color.textPrimary } as const,
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerLink: { ...typography.body, color: color.primary } as const,
   body: { ...typography.body, color: color.textPrimary } as const,
   caption: { ...typography.caption, color: color.textSecondary } as const,
   error: { ...typography.body, color: color.danger } as const,

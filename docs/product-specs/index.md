@@ -31,7 +31,7 @@
 |---|--------|------|--------|------|------|
 | 4 | ~~모바일 백그라운드 GPS 로깅~~ (`mobile-gps-logging`) | ⛔ | ⛔ | ⛔ | **폐기** — 방향 정정(기록→소싱). Expo 앱 골격·검증 체계는 4a가 승계 |
 | 4a | 여행 타임라인 — 갤러리 EXIF 역구성 (`trip-timeline`) | Plan | Design | Impl | **신규 핵심** — 8h 간격/3장 클러스터링, 여행 목록·타임라인 화면, 기록 코드 폐기 완료. 2026-09-01 (A등급) |
-| 4b | 외부 위치 이력 import (`location-import`) | - | - | - | 구글 타임라인 JSON·GPX 파일 — 타임라인 보강 (4a 이후) |
+| 4b | 외부 위치 이력 import (`location-import`) | Plan | Design | Impl | 구글 타임라인(신형 semanticSegments·구형 Takeout)·GPX 파서 + timesync 확대·dense path(≤500점) 업로드, 파일 단위 교체 멱등. 2026-09-01 (A등급) — **마일스톤 2 잔여분 종료** |
 | 5 | 갤러리 EXIF 추출 + Time-Sync 매칭 (`media-exif-timesync`) | Plan | Design | Impl | ⚠️ 부분 무효 — 세션 전제 폐기, EXIF·매칭 로직은 **4a로 승계 완료** (코드는 trips 기능으로 대체됨). 2026-09-01 (A등급) |
 | 6 | 웹 공유 뷰어 기본 구조 (`web-viewer-base`) | Plan | Design | Impl | Next.js `/v/:slug` SSR + OG 동적 메타, 상태별 표시, ui-tokens 웹 소비. 2026-09-01 (A등급) — **마일스톤 2 종료** |
 | 4c | 여행 업로드 — 모바일→서버 (`trip-upload`) | Plan | Design | Impl | (user,clientKey) 멱등 upsert + 모바일 업로드 버튼·auth-store 골격. E2E 실증. 2026-09-01 (A등급). 실로그인 UI는 콘솔 등록 후 |

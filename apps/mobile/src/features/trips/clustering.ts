@@ -1,4 +1,5 @@
 import type { MediaCoordSource } from '@vobby/shared-types';
+import type { LocationPoint } from './location-parsers';
 import type { AssetMeta, Trip, TripMedia } from './trips-db';
 
 // 클러스터링 파라미터 (plan §4.1 — 사용 데이터로 조정 예정)
@@ -39,25 +40,21 @@ function splitByGap(sorted: AssetMeta[]): AssetMeta[][] {
   return groups;
 }
 
-/** 여행 내 GPS 사진 중 시각 최근접 좌표로 근사 — 여행 밖 사진은 후보에서 제외 (design §0-2) */
+/** 시각 최근접 좌표로 근사 — 후보는 여행 내 GPS 사진 + 여행 범위 내 외부 포인트 (design §0-1) */
 function matchCoord(
   asset: AssetMeta,
-  gpsAssets: AssetMeta[],
+  candidates: LocationPoint[],
 ): { lon: number | null; lat: number | null; source: MediaCoordSource } {
   if (asset.lon !== null && asset.lat !== null) {
     return { lon: asset.lon, lat: asset.lat, source: 'exif' };
   }
-  let best: AssetMeta | null = null;
-  for (const g of gpsAssets) {
-    if (
-      !best ||
-      Math.abs(g.captured_at - asset.captured_at) <
-        Math.abs(best.captured_at - asset.captured_at)
-    ) {
-      best = g;
+  let best: LocationPoint | null = null;
+  for (const c of candidates) {
+    if (!best || Math.abs(c.t - asset.captured_at) < Math.abs(best.t - asset.captured_at)) {
+      best = c;
     }
   }
-  if (best && Math.abs(best.captured_at - asset.captured_at) <= TIMESYNC_TOLERANCE_S) {
+  if (best && Math.abs(best.t - asset.captured_at) <= TIMESYNC_TOLERANCE_S) {
     return { lon: best.lon, lat: best.lat, source: 'timesync' };
   }
   return { lon: null, lat: null, source: 'none' };
@@ -66,9 +63,11 @@ function matchCoord(
 /**
  * 갤러리 메타 → 여행/여행미디어 파생 (순수 함수 — 유닛 테스트 대상).
  * tripId는 결정적이어야 재계산이 안정적: `trip-{시작epoch}-{장수}`.
+ * extPoints(외부 위치 이력)는 보강만 — 여행 생성은 여전히 사진이 결정 (design §0-1).
  */
-export function clusterTrips(assets: AssetMeta[]): ClusterResult {
+export function clusterTrips(assets: AssetMeta[], extPoints: LocationPoint[] = []): ClusterResult {
   const sorted = [...assets].sort((a, b) => a.captured_at - b.captured_at);
+  const sortedExt = [...extPoints].sort((a, b) => a.t - b.t);
   const trips: Trip[] = [];
   const media: TripMedia[] = [];
 
@@ -76,10 +75,18 @@ export function clusterTrips(assets: AssetMeta[]): ClusterResult {
     if (group.length < MIN_TRIP_PHOTOS) continue;
 
     const tripId = `trip-${group[0].captured_at}-${group.length}`;
-    const gpsAssets = group.filter((a) => a.lon !== null && a.lat !== null);
+    const startedAt = group[0].captured_at;
+    const endedAt = group[group.length - 1].captured_at;
+
+    const photoPoints: LocationPoint[] = group
+      .filter((a) => a.lon !== null && a.lat !== null)
+      .map((a) => ({ t: a.captured_at, lon: a.lon!, lat: a.lat! }));
+    // 여행 시간 범위 밖 외부 포인트는 미사용 (plan §5)
+    const extInRange = sortedExt.filter((p) => p.t >= startedAt && p.t <= endedAt);
+    const candidates = [...photoPoints, ...extInRange];
 
     for (const asset of group) {
-      const coord = matchCoord(asset, gpsAssets);
+      const coord = matchCoord(asset, candidates);
       media.push({
         trip_id: tripId,
         asset_id: asset.asset_id,
@@ -91,23 +98,19 @@ export function clusterTrips(assets: AssetMeta[]): ClusterResult {
       });
     }
 
+    const track = [...candidates].sort((a, b) => a.t - b.t);
     let distanceM: number | null = null;
-    if (gpsAssets.length >= 2) {
+    if (track.length >= 2) {
       distanceM = 0;
-      for (let i = 1; i < gpsAssets.length; i++) {
-        distanceM += haversine(
-          gpsAssets[i - 1].lon!,
-          gpsAssets[i - 1].lat!,
-          gpsAssets[i].lon!,
-          gpsAssets[i].lat!,
-        );
+      for (let i = 1; i < track.length; i++) {
+        distanceM += haversine(track[i - 1].lon, track[i - 1].lat, track[i].lon, track[i].lat);
       }
     }
 
     trips.push({
       id: tripId,
-      started_at: group[0].captured_at,
-      ended_at: group[group.length - 1].captured_at,
+      started_at: startedAt,
+      ended_at: endedAt,
       media_count: group.length,
       distance_m: distanceM,
     });

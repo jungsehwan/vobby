@@ -1,5 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import type { MediaCoordSource } from '@vobby/shared-types';
+import type { LocationPoint } from './location-parsers';
 
 /** 갤러리 스캔 캐시 — asset당 getAssetInfoAsync 1회만 (design §0-1) */
 export interface AssetMeta {
@@ -58,6 +59,12 @@ db.execSync(`
     uri TEXT NOT NULL,
     PRIMARY KEY (trip_id, asset_id)
   );
+  CREATE TABLE IF NOT EXISTS location_points (
+    source_file TEXT NOT NULL,
+    t INTEGER NOT NULL,
+    lon REAL NOT NULL, lat REAL NOT NULL,
+    PRIMARY KEY (source_file, t)
+  );
 `);
 
 export function getKnownAssetIds(): Set<string> {
@@ -114,5 +121,47 @@ export function getTripMedia(tripId: string): TripMedia[] {
   return db.getAllSync<TripMedia>(
     `SELECT * FROM trip_media WHERE trip_id = ? ORDER BY captured_at`,
     [tripId],
+  );
+}
+
+/** import된 파일 요약 — 화면 목록용 */
+export interface ImportedFile {
+  source_file: string;
+  point_count: number;
+  from_t: number;
+  to_t: number;
+}
+
+/** 파일 단위 전량 교체 — 같은 파일 재import 멱등 (design §0-2) */
+export function replaceLocationPoints(sourceFile: string, points: LocationPoint[]): void {
+  db.withTransactionSync(() => {
+    db.runSync(`DELETE FROM location_points WHERE source_file = ?`, [sourceFile]);
+    for (const p of points) {
+      // 같은 초의 중복 포인트는 마지막 것만 유지 (PK 충돌 흡수)
+      db.runSync(
+        `INSERT OR REPLACE INTO location_points (source_file, t, lon, lat) VALUES (?, ?, ?, ?)`,
+        [sourceFile, p.t, p.lon, p.lat],
+      );
+    }
+  });
+}
+
+export function getAllLocationPoints(): LocationPoint[] {
+  return db.getAllSync<LocationPoint>(
+    `SELECT t, lon, lat FROM location_points ORDER BY t`,
+  );
+}
+
+export function getLocationPointsBetween(startS: number, endS: number): LocationPoint[] {
+  return db.getAllSync<LocationPoint>(
+    `SELECT t, lon, lat FROM location_points WHERE t BETWEEN ? AND ? ORDER BY t`,
+    [startS, endS],
+  );
+}
+
+export function listImportedFiles(): ImportedFile[] {
+  return db.getAllSync<ImportedFile>(
+    `SELECT source_file, COUNT(*) AS point_count, MIN(t) AS from_t, MAX(t) AS to_t
+     FROM location_points GROUP BY source_file ORDER BY source_file`,
   );
 }
