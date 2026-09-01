@@ -1,0 +1,5 @@
+# 정확한 버전 고정 — CLAUDE.md §의존성 (lock 파일 없는 언어는 핀 고정)
+# 갱신 절차: .venv에서 설치 후 pip freeze로 이 파일 재생성
+celery[redis]==5.6.3
+redis==6.4.0
+python-dotenv==1.2.3
