@@ -51,7 +51,7 @@
 |---|--------|------|--------|------|------|
 | 11 | 스토리 엔진 — EDL 타임라인 생성 (`director-edl`) | Plan | Design | Impl | vision·POI·BGM 결합 → EDL v1(4슬롯·비트 스냅), status 전이 analyzing→rendering. 2026-09-01 (A등급) |
 | 12 | 지도 궤적 애니메이션 렌더링 (`map-animation`) | - | - | - | Mapbox/Headless Chromium |
-| 13 | FFmpeg 숏폼 합성 파이프라인 (`ffmpeg-render`) | - | - | - | 9:16, Ken-Burns, HUD, 믹싱 |
+| 13 | FFmpeg 숏폼 합성 파이프라인 (`ffmpeg-render`) | Plan | Design | Impl | EDL→30s 9:16 mp4(Ken Burns·BGM 먹싱), 로컬 스토리지 규약. 2026-09-01 (A등급). Intro 지도는 기능 12 대기 |
 
 ### 마일스톤 5 — E2E 통합 & 배포
 

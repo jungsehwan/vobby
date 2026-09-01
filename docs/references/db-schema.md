@@ -50,7 +50,7 @@
 | location | geography(Point,4326) NULL | EXIF 위경도 없을 수 있음 |
 | source | text | CHECK: `exif`·`timesync`·`none` — 좌표 출처 (모바일 규약 공유) |
 | width / height | integer NULL | |
-| storage_key / thumbnail_key | text NULL | 선별 업로드 전 NULL |
+| storage_key / thumbnail_key | text NULL | **MEDIA_STORAGE_ROOT 기준 상대경로** (로컬 규약 — S3 교체 지점: renderer/db.py resolve_media_path) |
 | vision_score | jsonb NULL | Vision AI 결과 (마일스톤 3) |
 
 - `ix_media_location` GIST, `ix_media_trip_captured` (trip_id, captured_at)

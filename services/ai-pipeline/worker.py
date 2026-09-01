@@ -30,6 +30,7 @@ app = Celery(
         "spatial.tasks",
         "audio.tasks",
         "director.tasks",
+        "renderer.tasks",
     ],
 )
 
