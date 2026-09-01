@@ -1,6 +1,7 @@
 # Design: 모바일 백그라운드 GPS 로깅 (mobile-gps-logging)
 
-> Status: Approved (2026-09-01)
+> **⛔ 폐기 (2026-09-01)** — plan 배너 참조. 단, §0-4 검증 전략(Maestro·simctl 함정)은 도구 지식으로 유효 — exec-plan 완료 보고에 보존됨.
+> Status: ⛔ 제외
 > Plan: `docs/01-plan/features/mobile-gps-logging.plan.md`
 
 ## 0. 핵심 설계 결정

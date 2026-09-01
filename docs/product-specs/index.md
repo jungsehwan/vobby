@@ -24,11 +24,15 @@
 
 ### 마일스톤 2 — 클라이언트 & 미디어 인제스트
 
+> **⚠️ 2026-09-01 방향 정정**: 핵심은 직접 기록이 아니라 기존 위치 이력 소싱 — 기능 4 폐기, 4a·4b로 재편.
+
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
-| 4 | 모바일 백그라운드 GPS 로깅 (`mobile-gps-logging`) | Plan | Design | Impl | Expo 앱 생성 + TaskManager/SQLite. iOS 시뮬레이터 백그라운드 로깅 실증. 2026-09-01 (A등급). Android 실검증은 추후 |
-| 5 | 갤러리 EXIF 추출 + Time-Sync 매칭 (`media-exif-timesync`) | Plan | Design | Impl | EXIF>Time-Sync(±60s)>미매칭 우선순위, 세션 상세 화면. 2026-09-01 (A등급). 블러/중복 필터는 마일스톤 3로 이연 |
-| 6 | 웹 공유 뷰어 기본 구조 (`web-viewer-base`) | - | - | - | `/v/:id`, OpenGraph |
+| 4 | ~~모바일 백그라운드 GPS 로깅~~ (`mobile-gps-logging`) | ⛔ | ⛔ | ⛔ | **폐기** — 방향 정정(기록→소싱). Expo 앱 골격·검증 체계는 4a가 승계 |
+| 4a | 여행 타임라인 — 갤러리 EXIF 역구성 (`trip-timeline`) | - | - | - | **신규 핵심** — 사진 시각·GPS로 일자별 여행 자동 구성 (기능 5 승계 포함) |
+| 4b | 외부 위치 이력 import (`location-import`) | - | - | - | 구글 타임라인 JSON·GPX 파일 — 타임라인 보강 (4a 이후) |
+| 5 | 갤러리 EXIF 추출 + Time-Sync 매칭 (`media-exif-timesync`) | Plan | Design | Impl | ⚠️ 부분 무효 — 세션 전제 폐기, EXIF·매칭 로직은 4a가 승계. 2026-09-01 (A등급) |
+| 6 | 웹 공유 뷰어 기본 구조 (`web-viewer-base`) | Plan | Design | - | `/v/:slug`, OpenGraph — 진행 중 (방향 정정과 무관하게 유효) |
 | 7 | 공통 패키지 구성 (`shared-packages`) | Plan | Design | Impl | @vobby/shared-types(와이어 계약)·ui-tokens(토큰 2층). main-api 소비 전환 완료. 2026-09-01 (A등급) |
 
 ### 마일스톤 3 — 멀티모달 AI 분석 엔진

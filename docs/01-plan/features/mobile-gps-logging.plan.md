@@ -1,6 +1,8 @@
 # 모바일 백그라운드 GPS 로깅 (mobile-gps-logging)
 
-> Status: Approved (2026-09-01 — 기능 진행 지시)
+> **⛔ 폐기 (2026-09-01)** — 제품 방향 정정: 앱의 핵심은 직접 기록이 아니라 기존 위치 이력(갤러리 EXIF·구글 타임라인·GPX) 소싱.
+> 이 문서 전체는 참조 금지. 대체: `trip-timeline` (갤러리 EXIF 역구성). 코드 제거는 trip-timeline exec-plan에 포함.
+> Status: ⛔ 제외
 > 작성일: 2026-09-01
 
 ## 1. 배경 / 현재 동작 (코드 근거)

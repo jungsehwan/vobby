@@ -44,6 +44,7 @@ GPS 궤적 + 촬영 미디어를 멀티모달 AI로 융합 분석해 9:16 숏폼
 | 2026-08-31 | 기획서 v2.0 기반 placeholder 확정 | CLAUDE/ARCHITECTURE/DESIGN/QUALITY/commit스킬 | 스택 확정(RN+Next+NestJS+Python)에 따른 빌드·검증 명령 구체화 |
 | 2026-08-31 | 로컬 인프라를 brew 네이티브 → Docker Compose로 전환 | CLAUDE §인프라, ARCHITECTURE, .env.example | brew redis가 기존 Colima Docker redis(:6379)와 바인딩 충돌 — 접속 경로 따라 다른 인스턴스에 붙는 위험. 전용 컨테이너(:5433/:6380)로 격리 |
 | 2026-08-31 | 커밋 규칙을 `docs/guide/git-convention.md`로 단일화 | CLAUDE §커밋, commit 스킬 | 규칙이 CLAUDE.md·스킬 두 곳에 분산 — 단일 소스로 모으고 상호 참조 (wikidocs 332862 타입 체계 반영) |
+| 2026-09-01 | 제품 방향 정정: 직접 GPS 기록 폐기 → 기존 위치 이력 소싱 | ARCHITECTURE, index(기능 4 ⛔·4a/4b 신설), 기능 4·5 문서 배너 | 기획서의 "백그라운드 로깅" 문구를 그대로 구현했으나 실의도는 갤러리 EXIF·구글 타임라인·GPX 활용 — **마일스톤 착수 전 핵심 플로우 사용자 재확인 필수** |
 
 ---
 
