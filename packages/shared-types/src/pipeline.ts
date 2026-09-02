@@ -21,6 +21,9 @@ export interface ShortFormPublicView {
   /** 마일스톤 4(렌더러) 전까지 null */
   videoKey: string | null;
   thumbnailKey: string | null;
+  /** 절대 URL — 서버 PUBLIC_API_BASE_URL로 조립, done 전엔 null (e2e-integration) */
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
   durationS: number | null;
   stats: {
     /** 사진 GPS 시퀀스 근사 — GPS 사진 없는 여행은 null */
@@ -29,4 +32,15 @@ export interface ShortFormPublicView {
     mediaCount: number;
   };
   createdAt: string;
+}
+
+/** POST /v1/trips/:tripId/short-form (멱등) · GET /v1/short-forms/:id — 소유자용 */
+export interface ShortFormSummary {
+  id: string;
+  tripId: string;
+  status: ShortFormStatus;
+  shareSlug: string;
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
+  errorMessage: string | null;
 }

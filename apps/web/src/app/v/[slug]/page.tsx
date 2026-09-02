@@ -85,9 +85,15 @@ export default async function ViewerPage({ params }: Props) {
         </div>
       </div>
 
-      {shortForm.status === 'done' && shortForm.videoKey ? (
-        // 실제 재생은 마일스톤 4(렌더러)에서 — 스트리밍 URL 체계와 함께
-        <div className="video-placeholder">영상 플레이어 준비 중</div>
+      {shortForm.status === 'done' && shortForm.videoUrl ? (
+        <video
+          className="player"
+          controls
+          playsInline
+          preload="metadata"
+          poster={shortForm.thumbnailUrl ?? undefined}
+          src={shortForm.videoUrl}
+        />
       ) : (
         <div className="card">
           <p>{STATUS_MESSAGE[shortForm.status] ?? '처리 중입니다.'}</p>

@@ -31,6 +31,7 @@ app = Celery(
         "audio.tasks",
         "director.tasks",
         "renderer.tasks",
+        "orchestrator",
     ],
 )
 

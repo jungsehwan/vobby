@@ -50,15 +50,14 @@ main {
   font-size: 0.85rem;
 }
 
-.video-placeholder {
+.player {
   aspect-ratio: 9 / 16;
   max-height: 480px;
+  width: auto;
+  max-width: 100%;
+  display: block;
   border-radius: var(--radius-md);
-  background: var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary);
+  background: #000;
 }
 
 .cta {

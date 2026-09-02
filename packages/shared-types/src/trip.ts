@@ -34,3 +34,8 @@ export interface TripSummary {
   distanceM: number | null;
   mediaCount: number;
 }
+
+/** POST /v1/trips 응답 — mediaIds는 요청 media 배열과 같은 순서 (파일 업로드 대상 키) */
+export interface TripUploadResponse extends TripSummary {
+  mediaIds: string[];
+}

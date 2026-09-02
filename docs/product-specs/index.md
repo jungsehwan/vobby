@@ -57,5 +57,5 @@
 
 | # | 기능명 (slug) | Plan | Design | Impl | 비고 |
 |---|--------|------|--------|------|------|
-| 14 | E2E 통합 — 업로드→생성→재생 (`e2e-integration`) | - | - | - | Push 알림 포함 |
+| 14 | E2E 통합 — 업로드→생성→재생 (`e2e-integration`) | Plan | Design | Impl | 미디어 원본 업로드·생성 요청 API(멱등)·파이프라인 오케스트레이터·renders 공개 서빙·웹 video 재생·모바일 요청/폴링/로컬 알림. 원격 Push·HLS는 15로. 2026-09-02 (A등급) |
 | 15 | 스토어 제출 & 웹 배포 (`release-deploy`) | - | - | - | EAS Build, Vercel/AWS, CI/CD |

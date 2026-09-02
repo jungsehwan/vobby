@@ -14,9 +14,14 @@ export class QueueService {
     @Inject(PROGRESS_REDIS) private readonly progressRedis: Redis,
   ) {}
 
-  /** 큐 왕복 검증용 — 실태스크(마일스톤 3·4)도 같은 발행 경로를 쓴다 */
+  /** 큐 왕복 검증용 — 실태스크도 같은 발행 경로를 쓴다 */
   enqueuePing(payload: unknown): Promise<string> {
     return this.producer.sendTask('pipeline.ping', [payload]);
+  }
+
+  /** 숏폼 생성 오케스트레이터 — vision→spatial→director→renderer (e2e-integration design §0-1) */
+  enqueueGenerateShortForm(shortFormId: string): Promise<string> {
+    return this.producer.sendTask('pipeline.generate_short_form', [shortFormId]);
   }
 
   async getProgress(taskId: string): Promise<TaskProgress | null> {

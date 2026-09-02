@@ -1,9 +1,9 @@
-import type { TripSummary, TripUploadRequest } from '@vobby/shared-types';
-import { apiFetch } from '@/lib/api-client';
+import type { TripUploadRequest, TripUploadResponse } from '@vobby/shared-types';
+import { apiFetch, apiUploadFile } from '@/lib/api-client';
 import { buildPath } from './trip-path';
 import { getLocationPointsBetween, getTrip, getTripMedia } from './trips-db';
 
-export async function uploadTrip(tripId: string): Promise<TripSummary> {
+export async function uploadTrip(tripId: string): Promise<TripUploadResponse> {
   const trip = getTrip(tripId);
   if (!trip) throw new Error('여행을 찾을 수 없습니다');
   const media = getTripMedia(tripId);
@@ -27,5 +27,19 @@ export async function uploadTrip(tripId: string): Promise<TripSummary> {
     })),
   };
 
-  return apiFetch<TripSummary>('/v1/trips', { method: 'POST', body });
+  const response = await apiFetch<TripUploadResponse>('/v1/trips', {
+    method: 'POST',
+    body,
+  });
+
+  // 원본 파일 업로드 — mediaIds는 요청 media와 같은 순서 (design §0-2).
+  // 실패는 즉시 표면화: 재업로드는 멱등이므로 사용자가 다시 시도하면 된다
+  for (let i = 0; i < response.mediaIds.length; i++) {
+    const uri = media[i].uri;
+    await apiUploadFile(`/v1/media/${response.mediaIds[i]}/file`, {
+      uri,
+      name: `photo-${i}.${uri.toLowerCase().endsWith('.png') ? 'png' : 'jpg'}`,
+    });
+  }
+  return response;
 }

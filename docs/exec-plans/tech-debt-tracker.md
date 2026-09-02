@@ -10,3 +10,6 @@
 | 2026-09-01 | 스캔이 사진마다 getAssetInfoAsync 순차 호출 (수백 장 시 느림) | `apps/mobile gallery-scan.service.ts` | 명시적 스캔 + 수십 장 수준 — 무해 | 병렬화(제한 동시성) 또는 EXIF 배치 조회로 교체 | 미해결 |
 | 2026-09-01 | 업로드 시 media를 로우 단위 INSERT (수백 장 시 왕복 과다) | `main-api trip.service.ts` | MVP — 여행당 수십 장 수준 | 다중 VALUES 배치 insert로 교체 | 미해결 |
 | 2026-09-01 | POI 태스크가 DB 연결을 3회 개설 (exists/fetch/update 각각) | `ai-pipeline spatial/db.py` | 여행당 1회 실행 — 무해 | 태스크 단위 단일 연결(컨텍스트 전달)로 리팩토링, 파이프라인 공용 DB 모듈화와 함께 | 미해결 |
+| 2026-09-02 | iOS 실기기 HEIC 원본 업로드 미지원 (서버 jpeg/png만 수용, PIL/렌더러도 HEIC 미검증) | `mobile trip-upload` · `main-api media.service` | 시뮬레이터 검증은 jpg — 실기기 확보 전 | 실기기 검증 시 expo-image-manipulator 변환(모바일) 또는 pillow-heif(서버) 중 택1 | 미해결 |
+| 2026-09-02 | EDL 슬롯에 컷이 없으면 실영상 길이가 durationS(30s)와 불일치 (전량 screenshot 분류 등 극단 케이스) | `ai-pipeline director/edl.py` | 실사진에선 희귀 — 단색 픽스처에서만 재현 | director가 빈 body 슬롯을 highlight/intro 연장으로 재분배 | 미해결 |
+| 2026-09-02 | 파일 업로드가 순차 + 진행률 없음 (수십 장 시 대기 김), 부분 실패 시 처음부터 재시도 | `mobile trip-upload.service.ts` | MVP — 업로드 멱등이라 재시도 안전 | 제한 동시성 병렬 + storage_key 보유 미디어 skip | 미해결 |

@@ -8,12 +8,21 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Linking } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import type { MediaCoordSource } from '@vobby/shared-types';
 import { color, radius, spacing, typography } from '@vobby/ui-tokens';
 import { getTrip, getTripMedia } from '@/features/trips/trips-db';
 import { uploadTrip } from '@/features/trips/trip-upload.service';
+import { isInProgress } from '@/features/trips/short-form.service';
+import { useShortForm } from '@/features/trips/use-short-form';
 import { ApiError } from '@/lib/api-client';
+
+const SHORT_FORM_STAGE: Record<string, string> = {
+  requested: '생성 대기 중…',
+  analyzing: 'AI가 사진과 경로를 분석 중…',
+  rendering: '영상을 만드는 중…',
+};
 
 const SOURCE_LABEL: Record<MediaCoordSource, string> = {
   exif: 'EXIF',
@@ -37,11 +46,14 @@ export default function TripDetailScreen() {
   const trip = getTrip(id);
   const media = getTripMedia(id);
   const [upload, setUpload] = useState<UploadState>({ phase: 'idle' });
+  const [serverTripId, setServerTripId] = useState<string | null>(null);
+  const shortForm = useShortForm();
 
   const onUpload = useCallback(async () => {
     setUpload({ phase: 'uploading' });
     try {
-      await uploadTrip(id);
+      const response = await uploadTrip(id);
+      setServerTripId(response.id);
       setUpload({ phase: 'done' });
     } catch (e) {
       const message =
@@ -90,6 +102,56 @@ export default function TripDetailScreen() {
         <Text style={styles.error} testID="upload-error">{upload.message}</Text>
       )}
 
+      {upload.phase === 'done' && serverTripId && (
+        <Pressable
+          style={[
+            styles.uploadButton,
+            (shortForm.requesting ||
+              (shortForm.shortForm && isInProgress(shortForm.shortForm.status))) &&
+              styles.uploadDisabled,
+          ]}
+          onPress={() => shortForm.request(serverTripId)}
+          disabled={
+            shortForm.requesting ||
+            (shortForm.shortForm !== null && isInProgress(shortForm.shortForm.status))
+          }
+          testID="shortform-button"
+        >
+          {shortForm.requesting ||
+          (shortForm.shortForm && isInProgress(shortForm.shortForm.status)) ? (
+            <View style={styles.progressRow}>
+              <ActivityIndicator color={color.textInverse} />
+              <Text style={styles.uploadLabel}>
+                {SHORT_FORM_STAGE[shortForm.shortForm?.status ?? 'requested'] ??
+                  '처리 중…'}
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.uploadLabel}>
+              {shortForm.shortForm?.status === 'done'
+                ? '숏폼 완성 ✓ 다시 만들기'
+                : shortForm.shortForm?.status === 'failed'
+                  ? '실패 — 다시 시도'
+                  : '숏폼 만들기'}
+            </Text>
+          )}
+        </Pressable>
+      )}
+      {shortForm.shortForm?.status === 'done' && shortForm.shortForm.videoUrl && (
+        <Pressable
+          onPress={() => Linking.openURL(shortForm.shortForm!.videoUrl!)}
+          testID="shortform-open"
+        >
+          <Text style={styles.link}>완성된 영상 보기 →</Text>
+        </Pressable>
+      )}
+      {shortForm.shortForm?.status === 'failed' && (
+        <Text style={styles.error} testID="shortform-error">
+          {shortForm.shortForm.errorMessage ?? '영상 생성에 실패했어요'}
+        </Text>
+      )}
+      {shortForm.error && <Text style={styles.error}>{shortForm.error}</Text>}
+
       <FlatList
         data={media}
         keyExtractor={(m) => m.asset_id}
@@ -131,6 +193,8 @@ const styles = StyleSheet.create({
   },
   uploadDisabled: { opacity: 0.7 },
   uploadLabel: { ...typography.heading, color: color.textInverse } as const,
+  progressRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
+  link: { ...typography.body, color: color.primary } as const,
   row: {
     flexDirection: 'row',
     gap: spacing.md,

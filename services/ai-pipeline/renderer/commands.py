@@ -62,7 +62,12 @@ def concat_cmd(list_file: str, out_path: str) -> list[str]:
 def mux_audio_cmd(
     video_path: str, bgm_path: str | None, total_s: float, out_path: str
 ) -> list[str]:
-    """BGM 트림+페이드아웃 먹싱 — 없으면 무음 트랙."""
+    """BGM 트림+페이드아웃 먹싱 + 최종 재인코딩.
+
+    concat -c copy 산출물은 세그먼트별 SPS/PPS가 첫 파일 avcC와 어긋나
+    브라우저(엄격한 디먹서)가 재생하지 못한다 — 최종 1회 재인코딩으로 스트림을
+    균질화하고 +faststart로 moov를 앞으로 옮긴다 (e2e-integration D-6 실측).
+    """
     if bgm_path:
         audio_in = ["-i", bgm_path]
         afilter = f"atrim=0:{total_s},afade=t=out:st={total_s - 2}:d=2"
@@ -75,7 +80,9 @@ def mux_audio_cmd(
         *audio_in,
         "-filter_complex", f"[1:a]{afilter}[a]",
         "-map", "0:v", "-map", "[a]",
-        "-c:v", "copy", "-c:a", "aac", "-shortest",
+        "-r", str(FPS), "-pix_fmt", "yuv420p", "-c:v", "libx264", "-preset", "fast",
+        "-movflags", "+faststart",
+        "-c:a", "aac", "-shortest",
         out_path,
     ]
 
